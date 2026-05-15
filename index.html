@@ -6,30 +6,184 @@
   <title>🍷 Suivi de Cave</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f5f0eb; color: #3e2c1b; }
-    header { background: #6b3e2e; color: white; padding: 1rem; text-align: center; position: relative; }
-    nav { display: flex; justify-content: center; gap: 1rem; margin: 1rem 0; }
-    nav button { background: #a0523c; border: none; color: white; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
-    nav button.active { background: #3e2c1b; }
-    .badge { background: red; color: white; border-radius: 10px; padding: 0.1rem 0.4rem; font-size: 0.7rem; margin-left: 4px; }
-    main { padding: 1rem; max-width: 600px; margin: 0 auto; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0; padding: 0;
+      background: #f5f0eb;
+      color: #3e2c1b;
+    }
+    header {
+      background: #6b3e2e;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    nav button {
+      background: #a0523c;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+      position: relative;
+    }
+    nav button.active {
+      background: #3e2c1b;
+    }
+    .badge {
+      background: #e74c3c;
+      color: white;
+      border-radius: 10px;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.7rem;
+      position: absolute;
+      top: -5px;
+      right: -5px;
+    }
+    main {
+      padding: 0 1rem 2rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
     .section { display: none; }
     .section.active { display: block; }
-    label { display: block; margin: 0.5rem 0 0.2rem; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 0.6rem; margin-bottom: 0.8rem; border-radius: 6px; border: 1px solid #aaa; }
-    .checkbox-group { max-height: 180px; overflow-y: auto; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; background: white; margin-bottom: 0.8rem; }
-    .checkbox-group label { display: flex; align-items: center; gap: 0.4rem; font-weight: normal; margin: 0.2rem 0; }
-    button.primary { background: #6b3e2e; color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 8px; cursor: pointer; width: 100%; font-size: 1rem; }
-    button.danger { background: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
-    th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; }
-    th { background: #a0523c; color: white; }
-    .filter-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-    .filter-bar input, .filter-bar select { width: auto; flex: 1 1 120px; }
-    .list-item { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; }
-    .list-item input { flex: 1; margin-bottom: 0; }
-    .list-item button { padding: 0.4rem 0.7rem; }
-    .hidden { display: none; }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 0.8rem 0 0.3rem;
+      color: #5c3a2b;
+      font-size: 0.9rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #d0c4b8;
+      background: #faf9f7;
+      font-size: 0.95rem;
+    }
+    textarea { resize: vertical; }
+
+    /* NOUVELLE DISPOSITION EN LISTE VERTICALE ALIGNÉE */
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-bottom: 0.8rem;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.6rem;
+      background: #faf9f7;
+      border: 1px solid #e0d6cc;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      min-height: 44px; /* hauteur tactile optimale */
+    }
+    .checkbox-item:has(input:checked) {
+      background: #e7dbd1;
+      border-color: #a0523c;
+    }
+    .checkbox-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #6b3e2e;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    button.primary {
+      background: #6b3e2e;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+    button.primary:active { background: #4a2a1e; }
+    button.danger {
+      background: #c0392b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+    }
+    .inline-input-btn {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .inline-input-btn input { flex: 1; margin-bottom: 0; }
+    .inline-input-btn button { padding: 0.6rem 1rem; white-space: nowrap; }
+
+    .table-container {
+      overflow-x: auto;
+      margin: 1rem 0;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      background: white;
+    }
+    th {
+      background: #a0523c;
+      color: white;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    td {
+      padding: 0.4rem;
+      border-bottom: 1px solid #e0d6cc;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+    .list-item input[type="text"],
+    .list-item input[type="number"] {
+      margin-bottom: 0;
+      padding: 0.5rem;
+    }
+    .list-item .edit-futs { width: 70px; text-align: center; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -42,90 +196,118 @@
   <main>
     <!-- Saisie -->
     <div id="saisie" class="section active">
-      <label>👤 Qui ?</label>
-      <div class="checkbox-group" id="intervenants-checkboxes"></div>
-      <label>📅 Quand ?</label>
-      <input type="date" id="quand" required>
-      <label>🔧 Quoi ?</label>
-      <select id="quoi"></select>
-      <label>🍇 Cuvées / Contenants</label>
-      <div class="checkbox-group" id="cuvees-checkboxes"></div>
-      <div id="contenants-libre" class="hidden">
-        <label>Fûts précis ou contenant (ex: cuve inox, fûts 1-3)</label>
-        <input type="text" id="contenants-libre-input" placeholder="Laisser vide si non pertinent">
-      </div>
-      <label>📏 Mesure</label>
-      <div id="mesure-standard">
-        <div style="display: flex; gap: 0.5rem;">
-          <input type="number" id="mesure-valeur" placeholder="Valeur" step="any" style="flex:2">
-          <select id="mesure-unite" style="flex:1"></select>
+      <div class="card">
+        <label>👤 Qui ?</label>
+        <div class="checkbox-list" id="intervenants-checkboxes"></div>
+
+        <label>📅 Quand ?</label>
+        <input type="date" id="quand" required>
+
+        <label>🔧 Quoi ?</label>
+        <select id="quoi"></select>
+
+        <label>🍇 Cuvées / Contenants</label>
+        <div class="checkbox-list" id="cuvees-checkboxes"></div>
+        <div id="contenants-libre" class="hidden">
+          <label>Fûts précis ou contenant (ex: cuve inox, fûts 1-3)</label>
+          <input type="text" id="contenants-libre-input" placeholder="Laisser vide si non pertinent">
         </div>
-      </div>
-      <div id="mesure-pastilles" class="hidden">
-        <div style="display: flex; gap: 0.5rem;">
-          <input type="number" id="pastilles-nombre" placeholder="Nb pastilles" step="1" min="0" style="flex:1">
-          <input type="number" id="pastilles-grammes" placeholder="g/pastille" step="0.1" value="5" style="flex:1">
+
+        <label>📏 Mesure</label>
+        <div id="mesure-standard">
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="number" id="mesure-valeur" placeholder="Valeur" step="any" style="flex:2">
+            <select id="mesure-unite" style="flex:1"></select>
+          </div>
         </div>
-      </div>
-      <div id="champs-ouillage" class="hidden">
-        <label>Nombre de fûts</label>
-        <input type="number" id="ouillage-nb-futs" placeholder="Nombre de fûts" step="1" min="0">
-        <label>Volume ouillette (L)</label>
-        <input type="number" id="ouillage-volume" placeholder="Volume en L" step="0.1" value="10">
-        <div style="margin: 0.5rem 0; font-weight: bold;">
-          Volume total : <span id="ouillage-total">0</span> L |
-          Moyenne par fût : <span id="ouillage-moyenne">0</span> L/fût
+        <div id="mesure-pastilles" class="hidden">
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="number" id="pastilles-nombre" placeholder="Nb pastilles" step="1" min="0" style="flex:1">
+            <input type="number" id="pastilles-grammes" placeholder="g/pastille" step="0.1" value="5" style="flex:1">
+          </div>
         </div>
+        <div id="champs-ouillage" class="hidden">
+          <label>Nombre de fûts</label>
+          <input type="number" id="ouillage-nb-futs" placeholder="Nombre de fûts" step="1" min="0">
+          <label>Volume ouillette (L)</label>
+          <input type="number" id="ouillage-volume" placeholder="Volume en L" step="0.1" value="10">
+          <div style="margin: 0.5rem 0; font-weight: bold; font-size: 0.9rem; background: #f0e8e0; padding: 0.4rem; border-radius: 6px;">
+            Volume total : <span id="ouillage-total">0</span> L &nbsp;|&nbsp; Moy./fût : <span id="ouillage-moyenne">0</span> L
+          </div>
+        </div>
+
+        <label>🔁 À refaire le</label>
+        <input type="date" id="reiteration">
+
+        <label>⚠️ Anomalie / commentaire</label>
+        <textarea id="anomalie" rows="2"></textarea>
+
+        <button class="primary" id="btn-enregistrer">📝 Enregistrer l'intervention</button>
       </div>
-      <label>🔁 À refaire le</label>
-      <input type="date" id="reiteration">
-      <label>⚠️ Anomalie / commentaire</label>
-      <textarea id="anomalie" rows="2"></textarea>
-      <button class="primary" id="btn-enregistrer">📝 Enregistrer l'intervention</button>
     </div>
 
     <!-- Historique -->
     <div id="historique" class="section">
-      <div class="filter-bar">
-        <input type="date" id="filtre-date" placeholder="Date">
-        <select id="filtre-qui"><option value="">Tous</option></select>
-        <select id="filtre-quoi"><option value="">Toutes actions</option></select>
-        <select id="filtre-cuvee"><option value="">Toutes cuvées</option></select>
+      <div class="card">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem;">
+          <input type="date" id="filtre-date" placeholder="Date" style="flex:1">
+          <select id="filtre-qui" style="flex:1"><option value="">Tous</option></select>
+          <select id="filtre-quoi" style="flex:1"><option value="">Toutes actions</option></select>
+          <select id="filtre-cuvee" style="flex:1"><option value="">Toutes cuvées</option></select>
+        </div>
+        <button class="primary" id="btn-export-pdf" style="margin-bottom:0.8rem;">📄 Exporter PDF</button>
+        <div class="table-container">
+          <table id="table-historique">
+            <thead><tr><th>Date</th><th>Qui</th><th>Action</th><th>Cuvées</th><th>Mesure</th><th>Réit.</th><th>Anomalie</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
-      <button class="primary" id="btn-export-pdf">📄 Exporter PDF</button>
-      <table id="table-historique">
-        <thead><tr><th>Date</th><th>Qui</th><th>Action</th><th>Cuvées</th><th>Mesure</th><th>Réitération</th><th>Anomalie</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
     </div>
 
     <!-- Gestion des listes -->
     <div id="listes" class="section">
-      <h3>👥 Intervenants</h3>
-      <div id="liste-intervenants"></div>
-      <div class="list-item"><input type="text" id="new-intervenant" placeholder="Ajouter un intervenant"><button id="btn-add-intervenant">+</button></div>
-      <h3>🔧 Types d'action</h3>
-      <div id="liste-actions"></div>
-      <div class="list-item"><input type="text" id="new-action" placeholder="Ajouter une action"><button id="btn-add-action">+</button></div>
-      <h3>🍇 Cuvées / Contenants</h3>
-      <div id="liste-cuvees"></div>
-      <div class="list-item"><input type="text" id="new-cuvee" placeholder="Ajouter une cuvée/contenant"><button id="btn-add-cuvee">+</button></div>
-      <h3>📏 Unités de mesure</h3>
-      <div id="liste-unites"></div>
-      <div class="list-item"><input type="text" id="new-unite" placeholder="Ajouter une unité"><button id="btn-add-unite">+</button></div>
+      <div class="card">
+        <h3>👥 Intervenants</h3>
+        <div id="liste-intervenants"></div>
+        <div class="inline-input-btn">
+          <input type="text" id="new-intervenant" placeholder="Ajouter un intervenant">
+          <button id="btn-add-intervenant" class="primary" style="width:auto">+</button>
+        </div>
+
+        <h3>🔧 Types d'action</h3>
+        <div id="liste-actions"></div>
+        <div class="inline-input-btn">
+          <input type="text" id="new-action" placeholder="Ajouter une action">
+          <button id="btn-add-action" class="primary" style="width:auto">+</button>
+        </div>
+
+        <h3>🍇 Cuvées / Contenants</h3>
+        <div id="liste-cuvees"></div>
+        <div class="inline-input-btn">
+          <input type="text" id="new-cuvee" placeholder="Ajouter une cuvée/contenant">
+          <button id="btn-add-cuvee" class="primary" style="width:auto">+</button>
+        </div>
+
+        <h3>📏 Unités de mesure</h3>
+        <div id="liste-unites"></div>
+        <div class="inline-input-btn">
+          <input type="text" id="new-unite" placeholder="Ajouter une unité">
+          <button id="btn-add-unite" class="primary" style="width:auto">+</button>
+        </div>
+      </div>
     </div>
   </main>
 
   <script>
     // ==================== STOCKAGE LOCAL ====================
-    const STORAGE_KEY = 'cave_data_v2';
+    const STORAGE_KEY = 'cave_data_v4';
     let data = {
       listes: {
         intervenants: ['Etienne', 'Nico', 'Victor', 'Shana', 'Alicia'],
         actions: ['entretien', 'soutirage', 'ouillage', 'mise en masse', 'méchage', 'échantillon', 'entonnage', 'sulfitage'],
         cuvees: ['Tout', 'Bollery rouge', 'Bollery blanc', 'Pasquier des Chênes', 'Bourgogne', 'Au vellé', 'Ruchottes', 'Gevrey', 'Petite Chapelle', 'Clos de la Cabotte'],
         unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille', 'pastille'],
-        // nombre de fûts par cuvée (indexé par nom de cuvée)
         cuvees_futs: {}
       },
       interventions: []
@@ -154,7 +336,7 @@
       saveData();
     }
 
-    // ==================== UI INITIALISATION ====================
+    // ==================== UI ====================
     function populateSelect(id, options, selected = null) {
       const sel = document.getElementById(id);
       if (!sel) return;
@@ -183,12 +365,13 @@
       if (!container) return;
       container.innerHTML = '';
       data.listes.intervenants.forEach(nom => {
-        const label = document.createElement('label');
+        const item = document.createElement('div');
+        item.className = 'checkbox-item';
         const cb = document.createElement('input');
         cb.type = 'checkbox'; cb.value = nom; cb.classList.add('intervenant-cb');
-        label.appendChild(cb);
-        label.appendChild(document.createTextNode(' ' + nom));
-        container.appendChild(label);
+        item.appendChild(cb);
+        item.appendChild(document.createTextNode(' ' + nom));
+        container.appendChild(item);
       });
     }
 
@@ -197,7 +380,8 @@
       if (!container) return;
       container.innerHTML = '';
       data.listes.cuvees.forEach(c => {
-        const label = document.createElement('label');
+        const item = document.createElement('div');
+        item.className = 'checkbox-item';
         const cb = document.createElement('input');
         cb.type = 'checkbox'; cb.value = c; cb.classList.add('cuvee-cb');
         if (c === 'Tout') {
@@ -214,9 +398,9 @@
             toggleContenantsLibre();
           });
         }
-        label.appendChild(cb);
-        label.appendChild(document.createTextNode(' ' + c));
-        container.appendChild(label);
+        item.appendChild(cb);
+        item.appendChild(document.createTextNode(' ' + c));
+        container.appendChild(item);
       });
     }
 
@@ -263,7 +447,6 @@
       const optAutre = document.createElement('option');
       optAutre.value = '__autre__'; optAutre.textContent = 'Autre...';
       uniteSelect.appendChild(optAutre);
-      // Gérer affichage pastilles/ouillage
       handleMesureConditionnelle();
     }
 
@@ -274,7 +457,6 @@
       const standardDiv = document.getElementById('mesure-standard');
       const ouillageDiv = document.getElementById('champs-ouillage');
       
-      // Masquer tout d'abord
       pastillesDiv.classList.add('hidden');
       ouillageDiv.classList.add('hidden');
       standardDiv.classList.remove('hidden');
@@ -286,9 +468,7 @@
       }
     }
 
-    document.getElementById('quoi')?.addEventListener('change', (e) => {
-      updateMesureUnites(e.target.value);
-    });
+    document.getElementById('quoi')?.addEventListener('change', (e) => updateMesureUnites(e.target.value));
     document.getElementById('mesure-unite')?.addEventListener('change', handleMesureConditionnelle);
     document.getElementById('ouillage-nb-futs')?.addEventListener('input', calculOuillage);
     document.getElementById('ouillage-volume')?.addEventListener('input', calculOuillage);
@@ -357,7 +537,7 @@
         intervenants,
         quand, quoi,
         cuvees,
-        contenants, // champ libre si cuvees vide
+        contenants,
         mesure,
         reiteration, anomalie,
         created: new Date().toISOString()
@@ -366,7 +546,7 @@
       saveData();
       viderFormulaire();
       afficherHistorique();
-      verifierRappels(); // mise à jour badge
+      verifierRappels();
       alert('Intervention enregistrée ✅');
     }
 
@@ -429,7 +609,7 @@
     // ==================== EXPORT PDF ====================
     function exporterPDF() {
       if (typeof window.jspdf === 'undefined') {
-        alert('Chargement du module PDF en cours, veuillez réessayer dans un instant.');
+        alert('Chargement du module PDF... Réessayez.');
         return;
       }
       const { jsPDF } = window.jspdf;
@@ -452,10 +632,10 @@
       if (filtered.length === 0) {
         doc.text('Aucune intervention trouvée.', 20, y);
       } else {
-        doc.text(`Date - Qui - Action - Cuvées - Mesure - Réitération - Anomalie`, 20, y);
+        doc.text('Date - Qui - Action - Cuvées - Mesure - Réitération - Anomalie', 20, y);
         y += 6;
         filtered.forEach(i => {
-          const ligne = `${i.quand} | ${i.intervenants.join(', ')} | ${i.quoi} | ${i.cuvees.length ? i.cuvees.join(', ') : (i.contenants || '-')} | ${i.mesure || '-'} | ${i.reiteration || '-'} | ${i.anomalie || '-'}`;
+          const ligne = `${i.quand} | ${i.intervenants.join(', ')} | ${i.quoi} | ${i.cuvees.join(', ') || i.contenants} | ${i.mesure || '-'} | ${i.reiteration || '-'} | ${i.anomalie || '-'}`;
           doc.text(ligne, 20, y);
           y += 6;
           if (y > 280) { doc.addPage(); y = 20; }
@@ -464,14 +644,14 @@
       doc.save('suivi-cave.pdf');
     }
 
-    // ==================== GESTION LISTES (inclut fûts par cuvée) ====================
+    // ==================== GESTION LISTES ====================
     function buildListesUI() {
       // Intervenants
       const intervenantsDiv = document.getElementById('liste-intervenants');
       if (intervenantsDiv) {
         intervenantsDiv.innerHTML = data.listes.intervenants.map((nom, idx) => `
           <div class="list-item">
-            <input type="text" value="${nom}" data-idx="${idx}" class="edit-intervenant">
+            <input type="text" value="${nom}" data-idx="${idx}" class="edit-intervenant" style="flex:1">
             <button data-idx="${idx}" class="suppr-intervenant danger">🗑️</button>
           </div>`).join('');
       }
@@ -495,7 +675,7 @@
       if (actionsDiv) {
         actionsDiv.innerHTML = data.listes.actions.map((a, idx) => `
           <div class="list-item">
-            <input type="text" value="${a}" data-idx="${idx}" class="edit-action">
+            <input type="text" value="${a}" data-idx="${idx}" class="edit-action" style="flex:1">
             <button data-idx="${idx}" class="suppr-action danger">🗑️</button>
           </div>`).join('');
       }
@@ -521,13 +701,12 @@
         cuveesDiv.innerHTML = cuveesSansTout.map((c, idx) => {
           const nbFuts = data.listes.cuvees_futs[c] || 0;
           return `
-            <div class="list-item" style="flex-wrap: wrap;">
+            <div class="list-item">
               <input type="text" value="${c}" data-idx="${idx}" class="edit-cuvee" style="flex:2">
-              <input type="number" value="${nbFuts}" data-cuvee="${c}" class="edit-futs" placeholder="Nb fûts" min="0" style="width:70px">
+              <input type="number" value="${nbFuts}" data-cuvee="${c}" class="edit-futs" placeholder="Fûts" min="0" style="width:60px">
               <button data-idx="${idx}" class="suppr-cuvee danger">🗑️</button>
             </div>`;
         }).join('');
-        // "Tout" est géré automatiquement
       }
       document.querySelectorAll('.edit-cuvee').forEach(inp => {
         inp.addEventListener('change', (e) => {
@@ -537,7 +716,6 @@
           const newName = e.target.value;
           cuveesSansTout[idx] = newName;
           data.listes.cuvees = ['Tout', ...cuveesSansTout];
-          // Mettre à jour les fûts
           if (oldName !== newName) {
             data.listes.cuvees_futs[newName] = data.listes.cuvees_futs[oldName] || 0;
             delete data.listes.cuvees_futs[oldName];
@@ -551,7 +729,6 @@
           const val = parseInt(e.target.value) || 0;
           data.listes.cuvees_futs[cuvee] = val;
           saveData();
-          // Pas besoin de refresh complet, mais on peut mettre à jour l'affichage
         });
       });
       document.querySelectorAll('.suppr-cuvee').forEach(btn => {
@@ -570,7 +747,7 @@
       if (unitesDiv) {
         unitesDiv.innerHTML = data.listes.unites.map((u, idx) => `
           <div class="list-item">
-            <input type="text" value="${u}" data-idx="${idx}" class="edit-unite">
+            <input type="text" value="${u}" data-idx="${idx}" class="edit-unite" style="flex:1">
             <button data-idx="${idx}" class="suppr-unite danger">🗑️</button>
           </div>`).join('');
       }
@@ -590,7 +767,7 @@
       });
     }
 
-    // ==================== RAPPELS / NOTIFICATIONS LOCALES ====================
+    // ==================== RAPPELS ====================
     function verifierRappels() {
       const aujourdhui = new Date().toISOString().split('T')[0];
       const aVenir = data.interventions.filter(i => i.reiteration === aujourdhui);
@@ -602,7 +779,7 @@
       if (aVenir.length > 0 && Notification.permission === 'granted') {
         aVenir.forEach(i => {
           new Notification('🍷 Rappel de cave', {
-            body: `Action à faire : ${i.quoi} - ${i.cuvees.length ? i.cuvees.join(', ') : i.contenants}`,
+            body: `${i.quoi} - ${i.cuvees.join(', ') || i.contenants}`,
             icon: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><text y="1em" font-size="150">🍷</text></svg>')
           });
         });
@@ -610,9 +787,7 @@
     }
 
     function demanderPermissionNotification() {
-      if (Notification.permission === 'default') {
-        Notification.requestPermission();
-      }
+      if (Notification.permission === 'default') Notification.requestPermission();
     }
 
     // ==================== NAVIGATION ====================
@@ -632,7 +807,6 @@
     document.getElementById('btn-export-pdf').addEventListener('click', exporterPDF);
     document.getElementById('quand').value = new Date().toISOString().split('T')[0];
 
-    // Ajout éléments listes
     document.getElementById('btn-add-intervenant').addEventListener('click', () => {
       const val = document.getElementById('new-intervenant').value.trim();
       if (val) { data.listes.intervenants.push(val); saveData(); refreshAllSelects(); document.getElementById('new-intervenant').value = ''; }
@@ -685,7 +859,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE = 'cave-v2';
+          const CACHE = 'cave-v4';
           self.addEventListener('install', e => {
             e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(['./'])));
           });
@@ -704,8 +878,7 @@
     refreshAllSelects();
     setupPWA();
     demanderPermissionNotification();
-    verifierRappels(); // vérifie dès le chargement
-    // Rafraîchir les rappels toutes les heures (optionnel)
+    verifierRappels();
     setInterval(verifierRappels, 3600000);
 
     // Charger jsPDF
