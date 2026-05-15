@@ -7,51 +7,75 @@
   <style>
     * { box-sizing: border-box; }
     body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f5f0eb; color: #3e2c1b; }
-    header { background: #6b3e2e; color: white; padding: 1rem; text-align: center; }
+    header { background: #6b3e2e; color: white; padding: 1rem; text-align: center; position: relative; }
     nav { display: flex; justify-content: center; gap: 1rem; margin: 1rem 0; }
     nav button { background: #a0523c; border: none; color: white; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
     nav button.active { background: #3e2c1b; }
+    .badge { background: red; color: white; border-radius: 10px; padding: 0.1rem 0.4rem; font-size: 0.7rem; margin-left: 4px; }
     main { padding: 1rem; max-width: 600px; margin: 0 auto; }
     .section { display: none; }
     .section.active { display: block; }
     label { display: block; margin: 0.5rem 0 0.2rem; font-weight: bold; }
     input, select, textarea { width: 100%; padding: 0.6rem; margin-bottom: 0.8rem; border-radius: 6px; border: 1px solid #aaa; }
-    .checkbox-group { max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; background: white; }
+    .checkbox-group { max-height: 180px; overflow-y: auto; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; background: white; margin-bottom: 0.8rem; }
     .checkbox-group label { display: flex; align-items: center; gap: 0.4rem; font-weight: normal; margin: 0.2rem 0; }
     button.primary { background: #6b3e2e; color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 8px; cursor: pointer; width: 100%; font-size: 1rem; }
-    button.danger { background: #c0392b; }
-    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-    th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; font-size: 0.9rem; }
+    button.danger { background: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+    th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; }
     th { background: #a0523c; color: white; }
     .filter-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-    .filter-bar input, .filter-bar select { width: auto; flex: 1 1 150px; }
+    .filter-bar input, .filter-bar select { width: auto; flex: 1 1 120px; }
     .list-item { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; }
     .list-item input { flex: 1; margin-bottom: 0; }
     .list-item button { padding: 0.4rem 0.7rem; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <header>🍷 Suivi de Cave</header>
   <nav>
     <button id="tab-saisie" class="active">Saisie</button>
-    <button id="tab-historique">Historique</button>
+    <button id="tab-historique">Historique <span id="badge-rappel" class="badge hidden">0</span></button>
     <button id="tab-listes">Listes</button>
   </nav>
   <main>
     <!-- Saisie -->
     <div id="saisie" class="section active">
       <label>👤 Qui ?</label>
-      <select id="qui"></select>
+      <div class="checkbox-group" id="intervenants-checkboxes"></div>
       <label>📅 Quand ?</label>
       <input type="date" id="quand" required>
       <label>🔧 Quoi ?</label>
       <select id="quoi"></select>
-      <label>🍇 Cuvées</label>
+      <label>🍇 Cuvées / Contenants</label>
       <div class="checkbox-group" id="cuvees-checkboxes"></div>
+      <div id="contenants-libre" class="hidden">
+        <label>Fûts précis ou contenant (ex: cuve inox, fûts 1-3)</label>
+        <input type="text" id="contenants-libre-input" placeholder="Laisser vide si non pertinent">
+      </div>
       <label>📏 Mesure</label>
-      <div style="display: flex; gap: 0.5rem;">
-        <input type="number" id="mesure-valeur" placeholder="Valeur" step="any" style="flex:2">
-        <select id="mesure-unite" style="flex:1"></select>
+      <div id="mesure-standard">
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="number" id="mesure-valeur" placeholder="Valeur" step="any" style="flex:2">
+          <select id="mesure-unite" style="flex:1"></select>
+        </div>
+      </div>
+      <div id="mesure-pastilles" class="hidden">
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="number" id="pastilles-nombre" placeholder="Nb pastilles" step="1" min="0" style="flex:1">
+          <input type="number" id="pastilles-grammes" placeholder="g/pastille" step="0.1" value="5" style="flex:1">
+        </div>
+      </div>
+      <div id="champs-ouillage" class="hidden">
+        <label>Nombre de fûts</label>
+        <input type="number" id="ouillage-nb-futs" placeholder="Nombre de fûts" step="1" min="0">
+        <label>Volume ouillette (L)</label>
+        <input type="number" id="ouillage-volume" placeholder="Volume en L" step="0.1" value="10">
+        <div style="margin: 0.5rem 0; font-weight: bold;">
+          Volume total : <span id="ouillage-total">0</span> L |
+          Moyenne par fût : <span id="ouillage-moyenne">0</span> L/fût
+        </div>
       </div>
       <label>🔁 À refaire le</label>
       <input type="date" id="reiteration">
@@ -83,9 +107,9 @@
       <h3>🔧 Types d'action</h3>
       <div id="liste-actions"></div>
       <div class="list-item"><input type="text" id="new-action" placeholder="Ajouter une action"><button id="btn-add-action">+</button></div>
-      <h3>🍇 Cuvées</h3>
+      <h3>🍇 Cuvées / Contenants</h3>
       <div id="liste-cuvees"></div>
-      <div class="list-item"><input type="text" id="new-cuvee" placeholder="Ajouter une cuvée"><button id="btn-add-cuvee">+</button></div>
+      <div class="list-item"><input type="text" id="new-cuvee" placeholder="Ajouter une cuvée/contenant"><button id="btn-add-cuvee">+</button></div>
       <h3>📏 Unités de mesure</h3>
       <div id="liste-unites"></div>
       <div class="list-item"><input type="text" id="new-unite" placeholder="Ajouter une unité"><button id="btn-add-unite">+</button></div>
@@ -94,13 +118,15 @@
 
   <script>
     // ==================== STOCKAGE LOCAL ====================
-    const STORAGE_KEY = 'cave_data_v1';
+    const STORAGE_KEY = 'cave_data_v2';
     let data = {
       listes: {
         intervenants: ['Etienne', 'Nico', 'Victor', 'Shana', 'Alicia'],
         actions: ['entretien', 'soutirage', 'ouillage', 'mise en masse', 'méchage', 'échantillon', 'entonnage', 'sulfitage'],
         cuvees: ['Tout', 'Bollery rouge', 'Bollery blanc', 'Pasquier des Chênes', 'Bourgogne', 'Au vellé', 'Ruchottes', 'Gevrey', 'Petite Chapelle', 'Clos de la Cabotte'],
-        unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille']
+        unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille', 'pastille'],
+        // nombre de fûts par cuvée (indexé par nom de cuvée)
+        cuvees_futs: {}
       },
       interventions: []
     };
@@ -120,7 +146,8 @@
           intervenants: ['Etienne', 'Nico', 'Victor', 'Shana', 'Alicia'],
           actions: ['entretien', 'soutirage', 'ouillage', 'mise en masse', 'méchage', 'échantillon', 'entonnage', 'sulfitage'],
           cuvees: ['Tout', 'Bollery rouge', 'Bollery blanc', 'Pasquier des Chênes', 'Bourgogne', 'Au vellé', 'Ruchottes', 'Gevrey', 'Petite Chapelle', 'Clos de la Cabotte'],
-          unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille']
+          unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille', 'pastille'],
+          cuvees_futs: {}
         },
         interventions: []
       };
@@ -141,15 +168,28 @@
     }
 
     function refreshAllSelects() {
-      populateSelect('qui', data.listes.intervenants);
       populateSelect('quoi', data.listes.actions);
       populateSelect('filtre-qui', ['', ...data.listes.intervenants]);
       populateSelect('filtre-quoi', ['', ...data.listes.actions]);
       populateSelect('filtre-cuvee', ['', ...data.listes.cuvees.filter(c => c !== 'Tout')]);
-      const quoi = document.getElementById('quoi')?.value;
-      updateMesureUnites(quoi);
+      buildIntervenantsCheckboxes();
       buildCuveesCheckboxes();
+      updateMesureUnites(document.getElementById('quoi')?.value);
       buildListesUI();
+    }
+
+    function buildIntervenantsCheckboxes() {
+      const container = document.getElementById('intervenants-checkboxes');
+      if (!container) return;
+      container.innerHTML = '';
+      data.listes.intervenants.forEach(nom => {
+        const label = document.createElement('label');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.value = nom; cb.classList.add('intervenant-cb');
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(' ' + nom));
+        container.appendChild(label);
+      });
     }
 
     function buildCuveesCheckboxes() {
@@ -165,17 +205,23 @@
           cb.addEventListener('change', () => {
             const allCB = document.querySelectorAll('.cuvee-cb:not(#cb-tout)');
             allCB.forEach(cb2 => cb2.checked = cb.checked);
+            toggleContenantsLibre();
           });
         } else {
           cb.addEventListener('change', () => {
             const toutCB = document.getElementById('cb-tout');
             if (toutCB) toutCB.checked = false;
+            toggleContenantsLibre();
           });
         }
         label.appendChild(cb);
         label.appendChild(document.createTextNode(' ' + c));
         container.appendChild(label);
       });
+    }
+
+    function getSelectedIntervenants() {
+      return [...document.querySelectorAll('.intervenant-cb:checked')].map(cb => cb.value);
     }
 
     function getSelectedCuvees() {
@@ -186,9 +232,20 @@
       return checked;
     }
 
+    function toggleContenantsLibre() {
+      const cuvees = getSelectedCuvees();
+      const libreDiv = document.getElementById('contenants-libre');
+      if (cuvees.length === 0) {
+        libreDiv.classList.remove('hidden');
+      } else {
+        libreDiv.classList.add('hidden');
+        document.getElementById('contenants-libre-input').value = '';
+      }
+    }
+
     const uniteParAction = {
-      'sulfitage': ['g', 'mL'],
-      'ouillage': ['L', 'fûts'],
+      'sulfitage': ['g', 'mL', 'pastille'],
+      'ouillage': ['L'],
       'soutirage': ['L', 'hL'],
       'échantillon': ['bouteille', 'mL']
     };
@@ -203,48 +260,105 @@
         opt.value = u; opt.textContent = u;
         uniteSelect.appendChild(opt);
       });
-      // option libre "autre..."
       const optAutre = document.createElement('option');
       optAutre.value = '__autre__'; optAutre.textContent = 'Autre...';
       uniteSelect.appendChild(optAutre);
+      // Gérer affichage pastilles/ouillage
+      handleMesureConditionnelle();
+    }
+
+    function handleMesureConditionnelle() {
+      const action = document.getElementById('quoi')?.value;
+      const unite = document.getElementById('mesure-unite')?.value;
+      const pastillesDiv = document.getElementById('mesure-pastilles');
+      const standardDiv = document.getElementById('mesure-standard');
+      const ouillageDiv = document.getElementById('champs-ouillage');
+      
+      // Masquer tout d'abord
+      pastillesDiv.classList.add('hidden');
+      ouillageDiv.classList.add('hidden');
+      standardDiv.classList.remove('hidden');
+
+      if (action === 'ouillage') {
+        ouillageDiv.classList.remove('hidden');
+      } else if (unite === 'pastille') {
+        pastillesDiv.classList.remove('hidden');
+      }
     }
 
     document.getElementById('quoi')?.addEventListener('change', (e) => {
       updateMesureUnites(e.target.value);
     });
+    document.getElementById('mesure-unite')?.addEventListener('change', handleMesureConditionnelle);
+    document.getElementById('ouillage-nb-futs')?.addEventListener('input', calculOuillage);
+    document.getElementById('ouillage-volume')?.addEventListener('input', calculOuillage);
+
+    function calculOuillage() {
+      const nb = parseInt(document.getElementById('ouillage-nb-futs')?.value) || 0;
+      const vol = parseFloat(document.getElementById('ouillage-volume')?.value) || 0;
+      document.getElementById('ouillage-total').textContent = vol.toFixed(1);
+      document.getElementById('ouillage-moyenne').textContent = nb > 0 ? (vol / nb).toFixed(1) : '0';
+    }
 
     // ==================== INTERVENTIONS ====================
     function ajouterIntervention(e) {
       e.preventDefault();
-      const qui = document.getElementById('qui').value;
+      const intervenants = getSelectedIntervenants();
+      if (intervenants.length === 0) {
+        alert('Veuillez sélectionner au moins un intervenant.');
+        return;
+      }
       const quand = document.getElementById('quand').value;
       const quoi = document.getElementById('quoi').value;
       const cuvees = getSelectedCuvees();
-      const mesureVal = document.getElementById('mesure-valeur').value;
-      const mesureUniteSelect = document.getElementById('mesure-unite');
-      let mesureUnite = mesureUniteSelect.value;
-      if (mesureUnite === '__autre__') {
-        mesureUnite = prompt('Entrez la nouvelle unité :');
-        if (!mesureUnite) return;
-        if (!data.listes.unites.includes(mesureUnite)) {
-          data.listes.unites.push(mesureUnite);
-          saveData();
-          refreshAllSelects();
-        }
+      let contenants = '';
+      if (cuvees.length === 0) {
+        contenants = document.getElementById('contenants-libre-input')?.value.trim() || '';
       }
-      const reiteration = document.getElementById('reiteration').value;
-      const anomalie = document.getElementById('anomalie').value;
-
-      if (!qui || !quand || !quoi || cuvees.length === 0) {
-        alert('Veuillez remplir les champs obligatoires (Qui, Quand, Quoi, au moins une cuvée)');
+      if (!quand || !quoi) {
+        alert('Veuillez remplir les champs obligatoires (Quand, Quoi).');
         return;
       }
 
+      let mesure = '';
+      const mesureUnite = document.getElementById('mesure-unite')?.value;
+      if (mesureUnite === 'pastille') {
+        const nb = document.getElementById('pastilles-nombre')?.value;
+        const g = document.getElementById('pastilles-grammes')?.value;
+        if (nb) mesure = `${nb} pastille(s)`;
+        if (g) mesure += ` (${g}g/pastille)`;
+      } else if (quoi === 'ouillage') {
+        const nbFuts = document.getElementById('ouillage-nb-futs')?.value;
+        const vol = document.getElementById('ouillage-volume')?.value;
+        const moyenne = nbFuts > 0 ? (parseFloat(vol)/parseInt(nbFuts)).toFixed(1) : 0;
+        mesure = `${vol} L (${nbFuts} fûts, moy. ${moyenne} L/fût)`;
+      } else {
+        const val = document.getElementById('mesure-valeur')?.value;
+        if (val && mesureUnite && mesureUnite !== '__autre__') {
+          mesure = `${val} ${mesureUnite}`;
+        } else if (val && mesureUnite === '__autre__') {
+          const newUnit = prompt('Entrez la nouvelle unité :');
+          if (newUnit) {
+            if (!data.listes.unites.includes(newUnit)) {
+              data.listes.unites.push(newUnit);
+              saveData();
+              refreshAllSelects();
+            }
+            mesure = `${val} ${newUnit}`;
+          }
+        }
+      }
+
+      const reiteration = document.getElementById('reiteration').value;
+      const anomalie = document.getElementById('anomalie').value;
+
       const intervention = {
         id: Date.now(),
-        qui, quand, quoi,
+        intervenants,
+        quand, quoi,
         cuvees,
-        mesure: mesureVal ? `${mesureVal} ${mesureUnite}` : '',
+        contenants, // champ libre si cuvees vide
+        mesure,
         reiteration, anomalie,
         created: new Date().toISOString()
       };
@@ -252,6 +366,7 @@
       saveData();
       viderFormulaire();
       afficherHistorique();
+      verifierRappels(); // mise à jour badge
       alert('Intervention enregistrée ✅');
     }
 
@@ -261,6 +376,15 @@
       document.getElementById('reiteration').value = '';
       document.getElementById('anomalie').value = '';
       document.querySelectorAll('.cuvee-cb').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.intervenant-cb').forEach(cb => cb.checked = false);
+      document.getElementById('contenants-libre-input').value = '';
+      document.getElementById('pastilles-nombre').value = '';
+      document.getElementById('pastilles-grammes').value = '5';
+      document.getElementById('ouillage-nb-futs').value = '';
+      document.getElementById('ouillage-volume').value = '10';
+      document.getElementById('mesure-unite').value = '';
+      handleMesureConditionnelle();
+      toggleContenantsLibre();
     }
 
     function afficherHistorique() {
@@ -273,7 +397,7 @@
 
       let filtered = [...data.interventions].reverse();
       if (filtreDate) filtered = filtered.filter(i => i.quand === filtreDate);
-      if (filtreQui) filtered = filtered.filter(i => i.qui === filtreQui);
+      if (filtreQui) filtered = filtered.filter(i => i.intervenants.includes(filtreQui));
       if (filtreQuoi) filtered = filtered.filter(i => i.quoi === filtreQuoi);
       if (filtreCuvee) filtered = filtered.filter(i => i.cuvees.includes(filtreCuvee));
 
@@ -282,9 +406,9 @@
         const row = tbody.insertRow();
         row.innerHTML = `
           <td>${i.quand}</td>
-          <td>${i.qui}</td>
+          <td>${i.intervenants.join(', ')}</td>
           <td>${i.quoi}</td>
-          <td>${i.cuvees.join(', ')}</td>
+          <td>${i.cuvees.length ? i.cuvees.join(', ') : (i.contenants || '-')}</td>
           <td>${i.mesure || '-'}</td>
           <td>${i.reiteration || '-'}</td>
           <td>${i.anomalie || '-'}</td>
@@ -321,7 +445,7 @@
 
       let filtered = [...data.interventions].reverse();
       if (filtreDate) filtered = filtered.filter(i => i.quand === filtreDate);
-      if (filtreQui) filtered = filtered.filter(i => i.qui === filtreQui);
+      if (filtreQui) filtered = filtered.filter(i => i.intervenants.includes(filtreQui));
       if (filtreQuoi) filtered = filtered.filter(i => i.quoi === filtreQuoi);
       if (filtreCuvee) filtered = filtered.filter(i => i.cuvees.includes(filtreCuvee));
 
@@ -331,7 +455,7 @@
         doc.text(`Date - Qui - Action - Cuvées - Mesure - Réitération - Anomalie`, 20, y);
         y += 6;
         filtered.forEach(i => {
-          const ligne = `${i.quand} | ${i.qui} | ${i.quoi} | ${i.cuvees.join(', ')} | ${i.mesure || '-'} | ${i.reiteration || '-'} | ${i.anomalie || '-'}`;
+          const ligne = `${i.quand} | ${i.intervenants.join(', ')} | ${i.quoi} | ${i.cuvees.length ? i.cuvees.join(', ') : (i.contenants || '-')} | ${i.mesure || '-'} | ${i.reiteration || '-'} | ${i.anomalie || '-'}`;
           doc.text(ligne, 20, y);
           y += 6;
           if (y > 280) { doc.addPage(); y = 20; }
@@ -340,8 +464,9 @@
       doc.save('suivi-cave.pdf');
     }
 
-    // ==================== GESTION LISTES ====================
+    // ==================== GESTION LISTES (inclut fûts par cuvée) ====================
     function buildListesUI() {
+      // Intervenants
       const intervenantsDiv = document.getElementById('liste-intervenants');
       if (intervenantsDiv) {
         intervenantsDiv.innerHTML = data.listes.intervenants.map((nom, idx) => `
@@ -389,31 +514,53 @@
         });
       });
 
-      // Cuvées
+      // Cuvées avec fûts
       const cuveesDiv = document.getElementById('liste-cuvees');
       if (cuveesDiv) {
-        cuveesDiv.innerHTML = data.listes.cuvees.filter(c => c !== 'Tout').map((c, idx) => `
-          <div class="list-item">
-            <input type="text" value="${c}" data-idx="${idx}" class="edit-cuvee">
-            <button data-idx="${idx}" class="suppr-cuvee danger">🗑️</button>
-          </div>`).join('');
-        // "Tout" est géré automatiquement, ne pas le supprimer
+        const cuveesSansTout = data.listes.cuvees.filter(c => c !== 'Tout');
+        cuveesDiv.innerHTML = cuveesSansTout.map((c, idx) => {
+          const nbFuts = data.listes.cuvees_futs[c] || 0;
+          return `
+            <div class="list-item" style="flex-wrap: wrap;">
+              <input type="text" value="${c}" data-idx="${idx}" class="edit-cuvee" style="flex:2">
+              <input type="number" value="${nbFuts}" data-cuvee="${c}" class="edit-futs" placeholder="Nb fûts" min="0" style="width:70px">
+              <button data-idx="${idx}" class="suppr-cuvee danger">🗑️</button>
+            </div>`;
+        }).join('');
+        // "Tout" est géré automatiquement
       }
       document.querySelectorAll('.edit-cuvee').forEach(inp => {
         inp.addEventListener('change', (e) => {
           const idx = parseInt(e.target.dataset.idx);
           const cuveesSansTout = data.listes.cuvees.filter(c => c !== 'Tout');
-          cuveesSansTout[idx] = e.target.value;
+          const oldName = cuveesSansTout[idx];
+          const newName = e.target.value;
+          cuveesSansTout[idx] = newName;
           data.listes.cuvees = ['Tout', ...cuveesSansTout];
+          // Mettre à jour les fûts
+          if (oldName !== newName) {
+            data.listes.cuvees_futs[newName] = data.listes.cuvees_futs[oldName] || 0;
+            delete data.listes.cuvees_futs[oldName];
+          }
           saveData(); refreshAllSelects();
+        });
+      });
+      document.querySelectorAll('.edit-futs').forEach(inp => {
+        inp.addEventListener('change', (e) => {
+          const cuvee = e.target.dataset.cuvee;
+          const val = parseInt(e.target.value) || 0;
+          data.listes.cuvees_futs[cuvee] = val;
+          saveData();
+          // Pas besoin de refresh complet, mais on peut mettre à jour l'affichage
         });
       });
       document.querySelectorAll('.suppr-cuvee').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const idx = parseInt(e.target.dataset.idx);
           const cuveesSansTout = data.listes.cuvees.filter(c => c !== 'Tout');
-          cuveesSansTout.splice(idx, 1);
+          const removed = cuveesSansTout.splice(idx, 1)[0];
           data.listes.cuvees = ['Tout', ...cuveesSansTout];
+          delete data.listes.cuvees_futs[removed];
           saveData(); refreshAllSelects();
         });
       });
@@ -441,6 +588,31 @@
           saveData(); refreshAllSelects();
         });
       });
+    }
+
+    // ==================== RAPPELS / NOTIFICATIONS LOCALES ====================
+    function verifierRappels() {
+      const aujourdhui = new Date().toISOString().split('T')[0];
+      const aVenir = data.interventions.filter(i => i.reiteration === aujourdhui);
+      const badge = document.getElementById('badge-rappel');
+      if (badge) {
+        badge.textContent = aVenir.length;
+        badge.classList.toggle('hidden', aVenir.length === 0);
+      }
+      if (aVenir.length > 0 && Notification.permission === 'granted') {
+        aVenir.forEach(i => {
+          new Notification('🍷 Rappel de cave', {
+            body: `Action à faire : ${i.quoi} - ${i.cuvees.length ? i.cuvees.join(', ') : i.contenants}`,
+            icon: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><text y="1em" font-size="150">🍷</text></svg>')
+          });
+        });
+      }
+    }
+
+    function demanderPermissionNotification() {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
     }
 
     // ==================== NAVIGATION ====================
@@ -473,6 +645,7 @@
       const val = document.getElementById('new-cuvee').value.trim();
       if (val && !data.listes.cuvees.includes(val)) {
         data.listes.cuvees.push(val);
+        data.listes.cuvees_futs[val] = 0;
         saveData(); refreshAllSelects(); document.getElementById('new-cuvee').value = '';
       }
     });
@@ -484,14 +657,12 @@
       }
     });
 
-    // Rafraîchir historique quand filtres changent
     ['filtre-date','filtre-qui','filtre-quoi','filtre-cuvee'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', afficherHistorique);
     });
 
     // ==================== PWA ====================
     function setupPWA() {
-      // Manifest
       const manifest = {
         name: 'Suivi de Cave',
         short_name: 'Cave',
@@ -500,7 +671,7 @@
         background_color: '#f5f0eb',
         theme_color: '#6b3e2e',
         icons: [{
-          src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192"><text y="1em" font-size="150">🍷</text></svg>'),
+          src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><text y="1em" font-size="150">🍷</text></svg>'),
           sizes: '192x192',
           type: 'image/svg+xml'
         }]
@@ -512,16 +683,11 @@
       link.href = manifestURL;
       document.head.appendChild(link);
 
-      // Service Worker
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE = 'cave-v1';
-          const urlsToCache = [
-            './',
-            'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
-          ];
+          const CACHE = 'cave-v2';
           self.addEventListener('install', e => {
-            e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(urlsToCache)));
+            e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(['./'])));
           });
           self.addEventListener('fetch', e => {
             e.respondWith(caches.match(e.request).then(resp => resp || fetch(e.request)));
@@ -533,10 +699,14 @@
       }
     }
 
-    // Chargement initial
+    // Initialisation
     loadData();
     refreshAllSelects();
     setupPWA();
+    demanderPermissionNotification();
+    verifierRappels(); // vérifie dès le chargement
+    // Rafraîchir les rappels toutes les heures (optionnel)
+    setInterval(verifierRappels, 3600000);
 
     // Charger jsPDF
     const script = document.createElement('script');
