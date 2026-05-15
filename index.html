@@ -38,9 +38,7 @@
       transition: background 0.2s;
       position: relative;
     }
-    nav button.active {
-      background: #3e2c1b;
-    }
+    nav button.active { background: #3e2c1b; }
     .badge {
       background: #e74c3c;
       color: white;
@@ -84,7 +82,6 @@
     }
     textarea { resize: vertical; }
 
-    /* NOUVELLE DISPOSITION EN LISTE VERTICALE ALIGNÉE */
     .checkbox-list {
       display: flex;
       flex-direction: column;
@@ -102,7 +99,7 @@
       font-size: 0.9rem;
       cursor: pointer;
       transition: background 0.2s;
-      min-height: 44px; /* hauteur tactile optimale */
+      min-height: 44px;
     }
     .checkbox-item:has(input:checked) {
       background: #e7dbd1;
@@ -301,7 +298,7 @@
 
   <script>
     // ==================== STOCKAGE LOCAL ====================
-    const STORAGE_KEY = 'cave_data_v4';
+    const STORAGE_KEY = 'cave_data_v5';
     let data = {
       listes: {
         intervenants: ['Etienne', 'Nico', 'Victor', 'Shana', 'Alicia'],
@@ -312,6 +309,24 @@
       },
       interventions: []
     };
+
+    // Tri alphabétique des listes (sauf "Tout" qui reste en tête pour les cuvées)
+    function trierListes() {
+      data.listes.intervenants.sort((a, b) => a.localeCompare(b, 'fr'));
+      data.listes.actions.sort((a, b) => a.localeCompare(b, 'fr'));
+      data.listes.unites.sort((a, b) => a.localeCompare(b, 'fr'));
+      // Pour les cuvées, on trie tout sauf "Tout" qu'on replace en premier
+      const toutIndex = data.listes.cuvees.indexOf('Tout');
+      if (toutIndex > -1) {
+        data.listes.cuvees.splice(toutIndex, 1);
+        data.listes.cuvees.sort((a, b) => a.localeCompare(b, 'fr'));
+        data.listes.cuvees.unshift('Tout');
+      } else {
+        data.listes.cuvees.sort((a, b) => a.localeCompare(b, 'fr'));
+      }
+      saveData();
+      refreshAllSelects();
+    }
 
     function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
     function loadData() {
@@ -333,7 +348,7 @@
         },
         interventions: []
       };
-      saveData();
+      trierListes(); // tri initial
     }
 
     // ==================== UI ====================
@@ -500,6 +515,18 @@
         return;
       }
 
+      // Ajout automatique d'une nouvelle cuvée si le champ libre contient un nom inconnu
+      if (cuvees.length === 0 && contenants) {
+        // Si le contenant n'existe pas déjà dans la liste, on l'ajoute
+        if (!data.listes.cuvees.includes(contenants)) {
+          data.listes.cuvees.push(contenants);
+          data.listes.cuvees_futs[contenants] = 0;
+          trierListes(); // trie et sauvegarde
+          // petit message
+          alert(`Nouvelle cuvée "${contenants}" ajoutée à la liste.`);
+        }
+      }
+
       let mesure = '';
       const mesureUnite = document.getElementById('mesure-unite')?.value;
       if (mesureUnite === 'pastille') {
@@ -659,14 +686,14 @@
         inp.addEventListener('change', (e) => {
           const idx = e.target.dataset.idx;
           data.listes.intervenants[idx] = e.target.value;
-          saveData(); refreshAllSelects();
+          trierListes(); // trie et sauvegarde
         });
       });
       document.querySelectorAll('.suppr-intervenant').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const idx = e.target.dataset.idx;
           data.listes.intervenants.splice(idx, 1);
-          saveData(); refreshAllSelects();
+          trierListes();
         });
       });
 
@@ -683,14 +710,14 @@
         inp.addEventListener('change', (e) => {
           const idx = e.target.dataset.idx;
           data.listes.actions[idx] = e.target.value;
-          saveData(); refreshAllSelects();
+          trierListes();
         });
       });
       document.querySelectorAll('.suppr-action').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const idx = e.target.dataset.idx;
           data.listes.actions.splice(idx, 1);
-          saveData(); refreshAllSelects();
+          trierListes();
         });
       });
 
@@ -720,7 +747,7 @@
             data.listes.cuvees_futs[newName] = data.listes.cuvees_futs[oldName] || 0;
             delete data.listes.cuvees_futs[oldName];
           }
-          saveData(); refreshAllSelects();
+          trierListes(); // trie après modification
         });
       });
       document.querySelectorAll('.edit-futs').forEach(inp => {
@@ -728,7 +755,7 @@
           const cuvee = e.target.dataset.cuvee;
           const val = parseInt(e.target.value) || 0;
           data.listes.cuvees_futs[cuvee] = val;
-          saveData();
+          saveData(); // pas de tri nécessaire ici
         });
       });
       document.querySelectorAll('.suppr-cuvee').forEach(btn => {
@@ -738,7 +765,7 @@
           const removed = cuveesSansTout.splice(idx, 1)[0];
           data.listes.cuvees = ['Tout', ...cuveesSansTout];
           delete data.listes.cuvees_futs[removed];
-          saveData(); refreshAllSelects();
+          trierListes();
         });
       });
 
@@ -755,14 +782,14 @@
         inp.addEventListener('change', (e) => {
           const idx = e.target.dataset.idx;
           data.listes.unites[idx] = e.target.value;
-          saveData(); refreshAllSelects();
+          trierListes();
         });
       });
       document.querySelectorAll('.suppr-unite').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const idx = e.target.dataset.idx;
           data.listes.unites.splice(idx, 1);
-          saveData(); refreshAllSelects();
+          trierListes();
         });
       });
     }
@@ -809,25 +836,27 @@
 
     document.getElementById('btn-add-intervenant').addEventListener('click', () => {
       const val = document.getElementById('new-intervenant').value.trim();
-      if (val) { data.listes.intervenants.push(val); saveData(); refreshAllSelects(); document.getElementById('new-intervenant').value = ''; }
+      if (val) { data.listes.intervenants.push(val); trierListes(); document.getElementById('new-intervenant').value = ''; }
     });
     document.getElementById('btn-add-action').addEventListener('click', () => {
       const val = document.getElementById('new-action').value.trim();
-      if (val) { data.listes.actions.push(val); saveData(); refreshAllSelects(); document.getElementById('new-action').value = ''; }
+      if (val) { data.listes.actions.push(val); trierListes(); document.getElementById('new-action').value = ''; }
     });
     document.getElementById('btn-add-cuvee').addEventListener('click', () => {
       const val = document.getElementById('new-cuvee').value.trim();
       if (val && !data.listes.cuvees.includes(val)) {
         data.listes.cuvees.push(val);
         data.listes.cuvees_futs[val] = 0;
-        saveData(); refreshAllSelects(); document.getElementById('new-cuvee').value = '';
+        trierListes();
+        document.getElementById('new-cuvee').value = '';
       }
     });
     document.getElementById('btn-add-unite').addEventListener('click', () => {
       const val = document.getElementById('new-unite').value.trim();
       if (val && !data.listes.unites.includes(val)) {
         data.listes.unites.push(val);
-        saveData(); refreshAllSelects(); document.getElementById('new-unite').value = '';
+        trierListes();
+        document.getElementById('new-unite').value = '';
       }
     });
 
@@ -859,7 +888,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE = 'cave-v4';
+          const CACHE = 'cave-v5';
           self.addEventListener('install', e => {
             e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(['./'])));
           });
