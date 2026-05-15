@@ -4,14 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Suivi de Cave</title>
-  <!-- Icônes SVG inline -->
   <svg style="display:none" aria-hidden="true">
     <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></symbol>
     <symbol id="icon-delete" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
     <symbol id="icon-clone" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></symbol>
     <symbol id="icon-photo" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></symbol>
   </svg>
-
   <style>
     * { box-sizing: border-box; }
     :root {
@@ -342,12 +340,13 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
     // ==================== DONNÉES & STOCKAGE ====================
-    const STORAGE_KEY = 'cave_data_v6';
+    const STORAGE_KEY = 'cave_data_v7';
     let data = {
       listes: {
         intervenants: ['Etienne', 'Nico', 'Victor', 'Shana', 'Alicia'],
         actions: ['entretien', 'soutirage', 'ouillage', 'mise en masse', 'méchage', 'échantillon', 'entonnage', 'sulfitage'],
-        cuvees: ['Tout', 'Créot', 'Champerrier', 'Insolite', 'Perrières', 'Morey', 'Chambolle', 'Jouise', 'Songe', 'Bollery rouge', 'Bollery blanc', 'Pasquier des Chênes', 'Bourgogne', 'Au vellé', 'Ruchottes', 'Gevrey', 'Petite Chapelle', 'Clos de la Cabotte'],
+        // Cuvées initiales incluant les nouvelles
+        cuvees: ['Tout', 'Au vellé', 'Bollery blanc', 'Bollery rouge', 'Bourgogne', 'Chambolle', 'Champerrier', 'Clos de la Cabotte', 'Créot', 'Gevrey', 'Insolite', 'Jouise', 'Morey', 'Pasquier des Chênes', 'Perrières', 'Petite Chapelle', 'Ruchottes', 'Songe'],
         unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille', 'pastille'],
         cuvees_futs: {},
         rappel_jours: 0
@@ -367,7 +366,7 @@
         listes: {
           intervenants: ['Etienne', 'Nico', 'Victor', 'Shana', 'Alicia'],
           actions: ['entretien', 'soutirage', 'ouillage', 'mise en masse', 'méchage', 'échantillon', 'entonnage', 'sulfitage'],
-          cuvees: ['Tout', 'Bollery rouge', 'Bollery blanc', 'Pasquier des Chênes', 'Bourgogne', 'Au vellé', 'Ruchottes', 'Gevrey', 'Petite Chapelle', 'Clos de la Cabotte'],
+          cuvees: ['Tout', 'Au vellé', 'Bollery blanc', 'Bollery rouge', 'Bourgogne', 'Chambolle', 'Champerrier', 'Clos de la Cabotte', 'Créot', 'Gevrey', 'Insolite', 'Jouise', 'Morey', 'Pasquier des Chênes', 'Perrières', 'Petite Chapelle', 'Ruchottes', 'Songe'],
           unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille', 'pastille'],
           cuvees_futs: {},
           rappel_jours: 0
@@ -457,7 +456,6 @@
       const file = e.target.files[0];
       const preview = document.getElementById('photo-preview');
       if(!file){ preview.classList.add('hidden'); return; }
-      // compress to max 300px wide
       const img = new Image();
       img.onload = function(){
         const canvas = document.createElement('canvas');
@@ -511,16 +509,12 @@
       const inter = data.interventions.find(i=>i.id===id);
       if(!inter) return;
       editingId = id;
-      // remplir formulaire
       document.querySelectorAll('.intervenant-cb').forEach(cb=>cb.checked = inter.intervenants.includes(cb.value));
       document.getElementById('quand').value = inter.quand;
       document.getElementById('quoi').value = inter.quoi;
-      // cuvées
       document.querySelectorAll('.cuvee-cb').forEach(cb=>cb.checked = inter.cuvees.includes(cb.value) || (inter.cuvees.length===0 && inter.contenants));
       document.getElementById('contenants-libre-input').value = inter.contenants || '';
       toggleContenantsLibre();
-      // mesure
-      if(inter.mesure.includes('pastille')){ /* extract */ } else { document.getElementById('mesure-valeur').value = ''; }
       document.getElementById('reiteration').value = inter.reiteration || '';
       document.getElementById('anomalie').value = inter.anomalie || '';
       if(inter.photo){ document.getElementById('photo-preview').src = inter.photo; document.getElementById('photo-preview').classList.remove('hidden'); }
@@ -569,7 +563,6 @@
         return true;
       });
 
-      // tri
       filtered.sort((a,b)=>{
         let va=a[sortCol], vb=b[sortCol];
         if(sortCol==='intervenants') va=a.intervenants.join(','), vb=b.intervenants.join(',');
@@ -597,7 +590,6 @@
             <button data-id="${i.id}" class="delete-intervention">🗑️</button>
           </td>`;
       });
-      // pagination
       const pagDiv = document.getElementById('pagination');
       pagDiv.innerHTML = totalPages>1 ? `Page ${currentPage}/${totalPages} ` : '';
       if(currentPage>1) pagDiv.innerHTML += `<button id="prev-page">◀</button>`;
@@ -605,7 +597,6 @@
       document.getElementById('prev-page')?.addEventListener('click',()=>{ currentPage--; afficherHistorique(); });
       document.getElementById('next-page')?.addEventListener('click',()=>{ currentPage++; afficherHistorique(); });
 
-      // Events edit/delete/clone
       document.querySelectorAll('.edit-intervention').forEach(b=>b.addEventListener('click', ()=> modifierIntervention(parseInt(b.dataset.id))));
       document.querySelectorAll('.clone-intervention').forEach(b=>b.addEventListener('click', ()=>{
         const inter = data.interventions.find(i=>i.id===parseInt(b.dataset.id));
@@ -618,7 +609,6 @@
       }));
     }
 
-    // Tri colonnes
     document.querySelectorAll('#table-historique th[data-col]').forEach(th=>{
       th.addEventListener('click', ()=>{
         const col = th.dataset.col;
@@ -630,7 +620,6 @@
       });
     });
 
-    // Filtres
     document.getElementById('search-text')?.addEventListener('input', afficherHistorique);
     ['filtre-date','filtre-qui','filtre-quoi','filtre-cuvee'].forEach(id=> document.getElementById(id)?.addEventListener('change', afficherHistorique));
 
@@ -638,7 +627,7 @@
     function exporterPDF(){
       if(typeof window.jspdf==='undefined'){ alert('Chargement...'); return; }
       const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.setFontSize(16); doc.text('Suivi de Cave',20,20); doc.setFontSize(10); let y=30;
-      const filtered=data.interventions; // simplifié
+      const filtered=data.interventions;
       filtered.forEach(i=>{
         const ligne=`${i.quand} | ${i.intervenants.join(', ')} | ${i.quoi} | ${i.cuvees.join(', ')||i.contenants} | ${i.mesure||'-'} | ${i.reiteration||'-'} | ${i.anomalie||'-'}`;
         doc.text(ligne,20,y); y+=6; if(y>280){ doc.addPage(); y=20; }
@@ -699,7 +688,7 @@
     }
     document.getElementById('rappel-jours')?.addEventListener('change', function(){ data.listes.rappel_jours=parseInt(this.value)||0; saveData(); });
 
-    // ==================== GESTION LISTES (comme avant avec tri) ====================
+    // ==================== GESTION LISTES ====================
     function buildListesUI(){
       // Intervenants
       const divI=document.getElementById('liste-intervenants'); if(divI) divI.innerHTML=data.listes.intervenants.map((n,i)=>`<div class="list-item"><input type="text" value="${n}" data-idx="${i}" class="edit-intervenant" style="flex:1"><button data-idx="${i}" class="suppr-intervenant danger">🗑️</button></div>`).join('');
@@ -761,7 +750,7 @@
       const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'}); const url=URL.createObjectURL(blob);
       const link=document.createElement('link'); link.rel='manifest'; link.href=url; document.head.appendChild(link);
       if('serviceWorker' in navigator){
-        const swCode=`const CACHE='cave-v6';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
+        const swCode=`const CACHE='cave-v7';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
         const swBlob=new Blob([swCode],{type:'application/javascript'}); navigator.serviceWorker.register(URL.createObjectURL(swBlob),{scope:'./'}).catch(()=>{});
       }
     }
