@@ -3,23 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🍷 Suivi de Cave</title>
+  <title>Suivi de Cave</title>
+  <!-- Icônes SVG inline -->
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></symbol>
+    <symbol id="icon-delete" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
+    <symbol id="icon-clone" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></symbol>
+    <symbol id="icon-photo" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></symbol>
+  </svg>
+
   <style>
     * { box-sizing: border-box; }
+    :root {
+      --bg: #f4f1ea;
+      --card-bg: #ffffff;
+      --text: #3e3a35;
+      --accent: #5b8c5a;
+      --accent-dark: #3f6a3e;
+      --nav-bg: #6b4e3d;
+      --nav-active: #4a3328;
+      --danger: #c0392b;
+      --border: #d0c8b8;
+      --input-bg: #faf9f7;
+      --checked-bg: #d9e6d4;
+      --badge: #e74c3c;
+      --shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1e;
+        --card-bg: #2c2c2c;
+        --text: #e0d7c6;
+        --accent: #6fa86a;
+        --accent-dark: #4e7a4a;
+        --nav-bg: #4a3333;
+        --nav-active: #332222;
+        --danger: #e74c3c;
+        --border: #5a5046;
+        --input-bg: #3a3a3a;
+        --checked-bg: #3f4f3a;
+        --shadow: 0 2px 8px rgba(0,0,0,0.3);
+      }
+    }
     body {
       font-family: system-ui, -apple-system, sans-serif;
       margin: 0; padding: 0;
-      background: #f5f0eb;
-      color: #3e2c1b;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
     }
     header {
-      background: #6b3e2e;
+      background: var(--nav-bg);
       color: white;
       padding: 1rem;
       text-align: center;
       font-size: 1.2rem;
       font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
+    header svg { fill: white; width: 28px; height: 28px; }
     nav {
       display: flex;
       justify-content: center;
@@ -28,47 +73,46 @@
       flex-wrap: wrap;
     }
     nav button {
-      background: #a0523c;
+      background: var(--nav-bg);
       border: none;
       color: white;
       padding: 0.5rem 1rem;
       border-radius: 20px;
       cursor: pointer;
       font-size: 0.9rem;
-      transition: background 0.2s;
       position: relative;
+      transition: background 0.2s;
     }
-    nav button.active { background: #3e2c1b; }
+    nav button.active { background: var(--nav-active); }
     .badge {
-      background: #e74c3c;
+      background: var(--badge);
       color: white;
       border-radius: 10px;
       padding: 0.1rem 0.5rem;
       font-size: 0.7rem;
       position: absolute;
-      top: -5px;
-      right: -5px;
+      top: -8px;
+      right: -8px;
     }
     main {
       padding: 0 1rem 2rem;
-      max-width: 500px;
+      max-width: 600px;
       margin: 0 auto;
     }
     .section { display: none; }
     .section.active { display: block; }
-
     .card {
-      background: white;
+      background: var(--card-bg);
       border-radius: 12px;
       padding: 1rem;
       margin-bottom: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow);
     }
     label {
       display: block;
       font-weight: 600;
       margin: 0.8rem 0 0.3rem;
-      color: #5c3a2b;
+      color: var(--text);
       font-size: 0.9rem;
     }
     input, select, textarea {
@@ -76,12 +120,14 @@
       padding: 0.7rem;
       margin-bottom: 0.5rem;
       border-radius: 8px;
-      border: 1px solid #d0c4b8;
-      background: #faf9f7;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
       font-size: 0.95rem;
     }
     textarea { resize: vertical; }
-
+    .valid { border-color: #27ae60 !important; background: #eafaf1; }
+    .invalid { border-color: #e74c3c !important; }
     .checkbox-list {
       display: flex;
       flex-direction: column;
@@ -93,28 +139,26 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 0.6rem;
-      background: #faf9f7;
-      border: 1px solid #e0d6cc;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 0.9rem;
       cursor: pointer;
       transition: background 0.2s;
       min-height: 44px;
+      color: var(--text);
     }
     .checkbox-item:has(input:checked) {
-      background: #e7dbd1;
-      border-color: #a0523c;
+      background: var(--checked-bg);
+      border-color: var(--accent);
     }
     .checkbox-item input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      accent-color: #6b3e2e;
-      margin: 0;
-      flex-shrink: 0;
+      width: 20px; height: 20px;
+      accent-color: var(--accent);
+      margin: 0; flex-shrink: 0;
     }
-
     button.primary {
-      background: #6b3e2e;
+      background: var(--accent);
       color: white;
       border: none;
       padding: 0.8rem;
@@ -126,68 +170,49 @@
       margin-top: 0.5rem;
       transition: background 0.2s;
     }
-    button.primary:active { background: #4a2a1e; }
-    button.danger {
-      background: #c0392b;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 0.3rem 0.6rem;
-      cursor: pointer;
-    }
-    .inline-input-btn {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
+    button.primary:active { background: var(--accent-dark); }
+    button.danger { background: var(--danger); color: white; border: none; border-radius: 6px; padding: 0.3rem 0.6rem; cursor: pointer; }
+    .inline-input-btn { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
     .inline-input-btn input { flex: 1; margin-bottom: 0; }
     .inline-input-btn button { padding: 0.6rem 1rem; white-space: nowrap; }
 
-    .table-container {
-      overflow-x: auto;
-      margin: 1rem 0;
-      border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      background: white;
-    }
-    th {
-      background: #a0523c;
-      color: white;
-      padding: 0.5rem;
-      text-align: left;
-    }
-    td {
-      padding: 0.4rem;
-      border-bottom: 1px solid #e0d6cc;
-    }
+    .table-container { overflow-x: auto; margin: 1rem 0; border-radius: 8px; box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; background: var(--card-bg); color: var(--text); }
+    th { background: var(--accent); color: white; padding: 0.5rem; text-align: left; cursor: pointer; user-select: none; }
+    th.sorted::after { content: ' ▼'; font-size: 0.7rem; }
+    th.sorted.asc::after { content: ' ▲'; }
+    td { padding: 0.4rem; border-bottom: 1px solid var(--border); }
     tr:last-child td { border-bottom: none; }
+    .thumbnail { max-width: 40px; max-height: 40px; border-radius: 4px; cursor: pointer; }
 
-    .list-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin-bottom: 0.4rem;
-    }
-    .list-item input[type="text"],
-    .list-item input[type="number"] {
-      margin-bottom: 0;
-      padding: 0.5rem;
-    }
+    .list-item { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem; }
+    .list-item input[type="text"], .list-item input[type="number"] { margin-bottom: 0; padding: 0.5rem; }
     .list-item .edit-futs { width: 70px; text-align: center; }
     .hidden { display: none !important; }
+    .modal-overlay {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+      z-index: 10;
+    }
+    .modal {
+      background: var(--card-bg); padding: 1.5rem; border-radius: 12px; max-width: 300px; width: 90%;
+      text-align: center; color: var(--text);
+    }
+    .pagination { display: flex; justify-content: center; gap: 0.5rem; margin: 0.5rem 0; }
+    .pagination button { padding: 0.3rem 0.8rem; }
+    .stats-container { width: 100%; height: 300px; }
+    #photo-preview { max-width: 100px; max-height: 100px; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
-  <header>🍷 Suivi de Cave</header>
+  <header>
+    <svg viewBox="0 0 24 24" width="28" height="28"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+    Suivi de Cave
+  </header>
   <nav>
     <button id="tab-saisie" class="active">Saisie</button>
     <button id="tab-historique">Historique <span id="badge-rappel" class="badge hidden">0</span></button>
+    <button id="tab-stats">Stats</button>
     <button id="tab-listes">Listes</button>
   </nav>
   <main>
@@ -196,20 +221,16 @@
       <div class="card">
         <label>👤 Qui ?</label>
         <div class="checkbox-list" id="intervenants-checkboxes"></div>
-
         <label>📅 Quand ?</label>
         <input type="date" id="quand" required>
-
         <label>🔧 Quoi ?</label>
         <select id="quoi"></select>
-
         <label>🍇 Cuvées / Contenants</label>
         <div class="checkbox-list" id="cuvees-checkboxes"></div>
         <div id="contenants-libre" class="hidden">
           <label>Fûts précis ou contenant (ex: cuve inox, fûts 1-3)</label>
           <input type="text" id="contenants-libre-input" placeholder="Laisser vide si non pertinent">
         </div>
-
         <label>📏 Mesure</label>
         <div id="mesure-standard">
           <div style="display: flex; gap: 0.5rem;">
@@ -228,18 +249,20 @@
           <input type="number" id="ouillage-nb-futs" placeholder="Nombre de fûts" step="1" min="0">
           <label>Volume ouillette (L)</label>
           <input type="number" id="ouillage-volume" placeholder="Volume en L" step="0.1" value="10">
-          <div style="margin: 0.5rem 0; font-weight: bold; font-size: 0.9rem; background: #f0e8e0; padding: 0.4rem; border-radius: 6px;">
+          <div style="margin: 0.5rem 0; font-weight: bold; font-size: 0.9rem; background: var(--checked-bg); padding: 0.4rem; border-radius: 6px;">
             Volume total : <span id="ouillage-total">0</span> L &nbsp;|&nbsp; Moy./fût : <span id="ouillage-moyenne">0</span> L
           </div>
         </div>
-
+        <label>📸 Photo</label>
+        <input type="file" id="photo-input" accept="image/*" capture="environment">
+        <img id="photo-preview" class="hidden" alt="Aperçu">
         <label>🔁 À refaire le</label>
         <input type="date" id="reiteration">
-
         <label>⚠️ Anomalie / commentaire</label>
         <textarea id="anomalie" rows="2"></textarea>
-
         <button class="primary" id="btn-enregistrer">📝 Enregistrer l'intervention</button>
+        <button class="primary hidden" id="btn-update">✅ Mettre à jour</button>
+        <button class="primary hidden" id="btn-cancel-edit">Annuler</button>
       </div>
     </div>
 
@@ -247,95 +270,97 @@
     <div id="historique" class="section">
       <div class="card">
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem;">
+          <input type="text" id="search-text" placeholder="🔍 Recherche..." style="flex:2">
           <input type="date" id="filtre-date" placeholder="Date" style="flex:1">
           <select id="filtre-qui" style="flex:1"><option value="">Tous</option></select>
           <select id="filtre-quoi" style="flex:1"><option value="">Toutes actions</option></select>
           <select id="filtre-cuvee" style="flex:1"><option value="">Toutes cuvées</option></select>
         </div>
-        <button class="primary" id="btn-export-pdf" style="margin-bottom:0.8rem;">📄 Exporter PDF</button>
+        <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
+          <button class="primary" id="btn-export-pdf" style="width:auto">📄 PDF</button>
+          <button class="primary" id="btn-export-csv" style="width:auto">📊 CSV</button>
+          <button class="primary" id="btn-import-json" style="width:auto">📁 Import</button>
+          <button class="primary" id="btn-export-json" style="width:auto">💾 Export</button>
+        </div>
         <div class="table-container">
           <table id="table-historique">
-            <thead><tr><th>Date</th><th>Qui</th><th>Action</th><th>Cuvées</th><th>Mesure</th><th>Réit.</th><th>Anomalie</th><th></th></tr></thead>
+            <thead><tr>
+              <th data-col="quand">Date</th><th data-col="intervenants">Qui</th><th data-col="quoi">Action</th>
+              <th data-col="cuvees">Cuvées</th><th>Mesure</th><th data-col="reiteration">Réit.</th>
+              <th>Anomalie</th><th>Photo</th><th>Actions</th>
+            </tr></thead>
             <tbody></tbody>
           </table>
         </div>
+        <div class="pagination" id="pagination"></div>
       </div>
     </div>
 
-    <!-- Gestion des listes -->
+    <!-- Statistiques -->
+    <div id="stats" class="section">
+      <div class="card">
+        <h3>📈 Interventions par mois</h3>
+        <div class="stats-container"><canvas id="statsChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Listes & Paramètres -->
     <div id="listes" class="section">
       <div class="card">
         <h3>👥 Intervenants</h3>
         <div id="liste-intervenants"></div>
-        <div class="inline-input-btn">
-          <input type="text" id="new-intervenant" placeholder="Ajouter un intervenant">
-          <button id="btn-add-intervenant" class="primary" style="width:auto">+</button>
-        </div>
+        <div class="inline-input-btn"><input type="text" id="new-intervenant" placeholder="Ajouter un intervenant"><button id="btn-add-intervenant" class="primary" style="width:auto">+</button></div>
 
         <h3>🔧 Types d'action</h3>
         <div id="liste-actions"></div>
-        <div class="inline-input-btn">
-          <input type="text" id="new-action" placeholder="Ajouter une action">
-          <button id="btn-add-action" class="primary" style="width:auto">+</button>
-        </div>
+        <div class="inline-input-btn"><input type="text" id="new-action" placeholder="Ajouter une action"><button id="btn-add-action" class="primary" style="width:auto">+</button></div>
 
         <h3>🍇 Cuvées / Contenants</h3>
         <div id="liste-cuvees"></div>
-        <div class="inline-input-btn">
-          <input type="text" id="new-cuvee" placeholder="Ajouter une cuvée/contenant">
-          <button id="btn-add-cuvee" class="primary" style="width:auto">+</button>
-        </div>
+        <div class="inline-input-btn"><input type="text" id="new-cuvee" placeholder="Ajouter une cuvée/contenant"><button id="btn-add-cuvee" class="primary" style="width:auto">+</button></div>
 
         <h3>📏 Unités de mesure</h3>
         <div id="liste-unites"></div>
-        <div class="inline-input-btn">
-          <input type="text" id="new-unite" placeholder="Ajouter une unité">
-          <button id="btn-add-unite" class="primary" style="width:auto">+</button>
-        </div>
+        <div class="inline-input-btn"><input type="text" id="new-unite" placeholder="Ajouter une unité"><button id="btn-add-unite" class="primary" style="width:auto">+</button></div>
+
+        <h3>⏰ Rappels</h3>
+        <label>Jours avant la date pour être notifié</label>
+        <input type="number" id="rappel-jours" value="0" min="0" step="1" style="width:100px">
       </div>
     </div>
   </main>
 
+  <!-- Modale confirmation suppression -->
+  <div id="modal-delete" class="modal-overlay hidden">
+    <div class="modal">
+      <p>Supprimer définitivement cette intervention ?</p>
+      <button id="confirm-delete" class="danger" style="margin-right:0.5rem;">Supprimer</button>
+      <button id="cancel-delete" class="primary" style="width:auto">Annuler</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
-    // ==================== STOCKAGE LOCAL ====================
-    const STORAGE_KEY = 'cave_data_v5';
+    // ==================== DONNÉES & STOCKAGE ====================
+    const STORAGE_KEY = 'cave_data_v6';
     let data = {
       listes: {
         intervenants: ['Etienne', 'Nico', 'Victor', 'Shana', 'Alicia'],
         actions: ['entretien', 'soutirage', 'ouillage', 'mise en masse', 'méchage', 'échantillon', 'entonnage', 'sulfitage'],
         cuvees: ['Tout', 'Bollery rouge', 'Bollery blanc', 'Pasquier des Chênes', 'Bourgogne', 'Au vellé', 'Ruchottes', 'Gevrey', 'Petite Chapelle', 'Clos de la Cabotte'],
         unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille', 'pastille'],
-        cuvees_futs: {}
+        cuvees_futs: {},
+        rappel_jours: 0
       },
       interventions: []
     };
-
-    // Tri alphabétique des listes (sauf "Tout" qui reste en tête pour les cuvées)
-    function trierListes() {
-      data.listes.intervenants.sort((a, b) => a.localeCompare(b, 'fr'));
-      data.listes.actions.sort((a, b) => a.localeCompare(b, 'fr'));
-      data.listes.unites.sort((a, b) => a.localeCompare(b, 'fr'));
-      // Pour les cuvées, on trie tout sauf "Tout" qu'on replace en premier
-      const toutIndex = data.listes.cuvees.indexOf('Tout');
-      if (toutIndex > -1) {
-        data.listes.cuvees.splice(toutIndex, 1);
-        data.listes.cuvees.sort((a, b) => a.localeCompare(b, 'fr'));
-        data.listes.cuvees.unshift('Tout');
-      } else {
-        data.listes.cuvees.sort((a, b) => a.localeCompare(b, 'fr'));
-      }
-      saveData();
-      refreshAllSelects();
-    }
 
     function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
     function loadData() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        try { data = JSON.parse(stored); } catch(e) { initDefault(); }
-      } else {
-        initDefault();
-      }
+        try { data = JSON.parse(stored); if(!data.listes.rappel_jours) data.listes.rappel_jours=0; } catch(e) { initDefault(); }
+      } else { initDefault(); }
     }
     function initDefault() {
       data = {
@@ -344,576 +369,411 @@
           actions: ['entretien', 'soutirage', 'ouillage', 'mise en masse', 'méchage', 'échantillon', 'entonnage', 'sulfitage'],
           cuvees: ['Tout', 'Bollery rouge', 'Bollery blanc', 'Pasquier des Chênes', 'Bourgogne', 'Au vellé', 'Ruchottes', 'Gevrey', 'Petite Chapelle', 'Clos de la Cabotte'],
           unites: ['g', 'mL', 'L', 'hL', 'fûts', 'bouteille', 'pastille'],
-          cuvees_futs: {}
+          cuvees_futs: {},
+          rappel_jours: 0
         },
         interventions: []
       };
-      trierListes(); // tri initial
+      trierListes();
+    }
+
+    function trierListes() {
+      data.listes.intervenants.sort((a,b)=>a.localeCompare(b,'fr'));
+      data.listes.actions.sort((a,b)=>a.localeCompare(b,'fr'));
+      data.listes.unites.sort((a,b)=>a.localeCompare(b,'fr'));
+      const tout = data.listes.cuvees.indexOf('Tout');
+      if(tout>-1){ data.listes.cuvees.splice(tout,1); data.listes.cuvees.sort((a,b)=>a.localeCompare(b,'fr')); data.listes.cuvees.unshift('Tout'); }
+      else data.listes.cuvees.sort((a,b)=>a.localeCompare(b,'fr'));
+      saveData(); refreshAllSelects();
     }
 
     // ==================== UI ====================
-    function populateSelect(id, options, selected = null) {
-      const sel = document.getElementById(id);
-      if (!sel) return;
-      sel.innerHTML = '';
-      options.forEach(opt => {
-        const o = document.createElement('option');
-        o.value = opt; o.textContent = opt;
-        if (selected === opt) o.selected = true;
-        sel.appendChild(o);
-      });
+    function populateSelect(id, options, selected=null) {
+      const sel = document.getElementById(id); if(!sel) return;
+      sel.innerHTML=''; options.forEach(o=>{ const opt=document.createElement('option'); opt.value=o; opt.textContent=o; if(selected===o)opt.selected=true; sel.appendChild(opt); });
     }
 
     function refreshAllSelects() {
       populateSelect('quoi', data.listes.actions);
-      populateSelect('filtre-qui', ['', ...data.listes.intervenants]);
-      populateSelect('filtre-quoi', ['', ...data.listes.actions]);
-      populateSelect('filtre-cuvee', ['', ...data.listes.cuvees.filter(c => c !== 'Tout')]);
-      buildIntervenantsCheckboxes();
-      buildCuveesCheckboxes();
+      populateSelect('filtre-qui', ['',...data.listes.intervenants]);
+      populateSelect('filtre-quoi', ['',...data.listes.actions]);
+      populateSelect('filtre-cuvee', ['',...data.listes.cuvees.filter(c=>c!=='Tout')]);
+      buildIntervenantsCheckboxes(); buildCuveesCheckboxes();
       updateMesureUnites(document.getElementById('quoi')?.value);
       buildListesUI();
+      document.getElementById('rappel-jours').value = data.listes.rappel_jours || 0;
     }
 
     function buildIntervenantsCheckboxes() {
-      const container = document.getElementById('intervenants-checkboxes');
-      if (!container) return;
-      container.innerHTML = '';
-      data.listes.intervenants.forEach(nom => {
-        const item = document.createElement('div');
-        item.className = 'checkbox-item';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox'; cb.value = nom; cb.classList.add('intervenant-cb');
-        item.appendChild(cb);
-        item.appendChild(document.createTextNode(' ' + nom));
-        container.appendChild(item);
+      const c = document.getElementById('intervenants-checkboxes'); if(!c) return; c.innerHTML='';
+      data.listes.intervenants.forEach(nom=>{
+        const item=document.createElement('div'); item.className='checkbox-item';
+        const cb=document.createElement('input'); cb.type='checkbox'; cb.value=nom; cb.classList.add('intervenant-cb');
+        item.appendChild(cb); item.appendChild(document.createTextNode(' '+nom)); c.appendChild(item);
       });
     }
 
     function buildCuveesCheckboxes() {
-      const container = document.getElementById('cuvees-checkboxes');
-      if (!container) return;
-      container.innerHTML = '';
-      data.listes.cuvees.forEach(c => {
-        const item = document.createElement('div');
-        item.className = 'checkbox-item';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox'; cb.value = c; cb.classList.add('cuvee-cb');
-        if (c === 'Tout') {
-          cb.id = 'cb-tout';
-          cb.addEventListener('change', () => {
-            const allCB = document.querySelectorAll('.cuvee-cb:not(#cb-tout)');
-            allCB.forEach(cb2 => cb2.checked = cb.checked);
-            toggleContenantsLibre();
-          });
+      const c = document.getElementById('cuvees-checkboxes'); if(!c) return; c.innerHTML='';
+      data.listes.cuvees.forEach(cv=>{
+        const item=document.createElement('div'); item.className='checkbox-item';
+        const cb=document.createElement('input'); cb.type='checkbox'; cb.value=cv; cb.classList.add('cuvee-cb');
+        if(cv==='Tout'){
+          cb.id='cb-tout'; cb.addEventListener('change',()=>{ document.querySelectorAll('.cuvee-cb:not(#cb-tout)').forEach(cb2=>cb2.checked=cb.checked); toggleContenantsLibre(); });
         } else {
-          cb.addEventListener('change', () => {
-            const toutCB = document.getElementById('cb-tout');
-            if (toutCB) toutCB.checked = false;
-            toggleContenantsLibre();
-          });
+          cb.addEventListener('change',()=>{ const tout=document.getElementById('cb-tout'); if(tout)tout.checked=false; toggleContenantsLibre(); });
         }
-        item.appendChild(cb);
-        item.appendChild(document.createTextNode(' ' + c));
-        container.appendChild(item);
+        item.appendChild(cb); item.appendChild(document.createTextNode(' '+cv)); c.appendChild(item);
       });
     }
 
-    function getSelectedIntervenants() {
-      return [...document.querySelectorAll('.intervenant-cb:checked')].map(cb => cb.value);
-    }
+    function getSelectedIntervenants(){ return [...document.querySelectorAll('.intervenant-cb:checked')].map(cb=>cb.value); }
+    function getSelectedCuvees(){ const checked=[...document.querySelectorAll('.cuvee-cb:checked')].map(cb=>cb.value); if(checked.includes('Tout')) return data.listes.cuvees.filter(c=>c!=='Tout'); return checked; }
+    function toggleContenantsLibre(){ const cuvees=getSelectedCuvees(); document.getElementById('contenants-libre').classList.toggle('hidden', cuvees.length>0); if(cuvees.length>0) document.getElementById('contenants-libre-input').value=''; }
 
-    function getSelectedCuvees() {
-      const checked = [...document.querySelectorAll('.cuvee-cb:checked')].map(cb => cb.value);
-      if (checked.includes('Tout')) {
-        return data.listes.cuvees.filter(c => c !== 'Tout');
-      }
-      return checked;
-    }
-
-    function toggleContenantsLibre() {
-      const cuvees = getSelectedCuvees();
-      const libreDiv = document.getElementById('contenants-libre');
-      if (cuvees.length === 0) {
-        libreDiv.classList.remove('hidden');
-      } else {
-        libreDiv.classList.add('hidden');
-        document.getElementById('contenants-libre-input').value = '';
-      }
-    }
-
-    const uniteParAction = {
-      'sulfitage': ['g', 'mL', 'pastille'],
-      'ouillage': ['L'],
-      'soutirage': ['L', 'hL'],
-      'échantillon': ['bouteille', 'mL']
-    };
-
-    function updateMesureUnites(action) {
-      const uniteSelect = document.getElementById('mesure-unite');
-      if (!uniteSelect) return;
-      const suggestions = uniteParAction[action] || data.listes.unites;
-      uniteSelect.innerHTML = '';
-      suggestions.forEach(u => {
-        const opt = document.createElement('option');
-        opt.value = u; opt.textContent = u;
-        uniteSelect.appendChild(opt);
-      });
-      const optAutre = document.createElement('option');
-      optAutre.value = '__autre__'; optAutre.textContent = 'Autre...';
-      uniteSelect.appendChild(optAutre);
+    const uniteParAction = {'sulfitage':['g','mL','pastille'],'ouillage':['L'],'soutirage':['L','hL'],'échantillon':['bouteille','mL']};
+    function updateMesureUnites(action){
+      const sel=document.getElementById('mesure-unite'); if(!sel)return;
+      const sugg=uniteParAction[action]||data.listes.unites;
+      sel.innerHTML=''; sugg.forEach(u=>{ const o=document.createElement('option'); o.value=u; o.textContent=u; sel.appendChild(o); });
+      const oa=document.createElement('option'); oa.value='__autre__'; oa.textContent='Autre...'; sel.appendChild(oa);
       handleMesureConditionnelle();
     }
 
-    function handleMesureConditionnelle() {
-      const action = document.getElementById('quoi')?.value;
-      const unite = document.getElementById('mesure-unite')?.value;
-      const pastillesDiv = document.getElementById('mesure-pastilles');
-      const standardDiv = document.getElementById('mesure-standard');
-      const ouillageDiv = document.getElementById('champs-ouillage');
-      
-      pastillesDiv.classList.add('hidden');
-      ouillageDiv.classList.add('hidden');
-      standardDiv.classList.remove('hidden');
-
-      if (action === 'ouillage') {
-        ouillageDiv.classList.remove('hidden');
-      } else if (unite === 'pastille') {
-        pastillesDiv.classList.remove('hidden');
-      }
+    function handleMesureConditionnelle(){
+      const action=document.getElementById('quoi')?.value, unite=document.getElementById('mesure-unite')?.value;
+      document.getElementById('mesure-pastilles').classList.toggle('hidden', unite!=='pastille');
+      document.getElementById('champs-ouillage').classList.toggle('hidden', action!=='ouillage');
     }
 
-    document.getElementById('quoi')?.addEventListener('change', (e) => updateMesureUnites(e.target.value));
+    document.getElementById('quoi')?.addEventListener('change', e=>updateMesureUnites(e.target.value));
     document.getElementById('mesure-unite')?.addEventListener('change', handleMesureConditionnelle);
     document.getElementById('ouillage-nb-futs')?.addEventListener('input', calculOuillage);
     document.getElementById('ouillage-volume')?.addEventListener('input', calculOuillage);
+    function calculOuillage(){ const nb=parseInt(document.getElementById('ouillage-nb-futs')?.value)||0, vol=parseFloat(document.getElementById('ouillage-volume')?.value)||0; document.getElementById('ouillage-total').textContent=vol.toFixed(1); document.getElementById('ouillage-moyenne').textContent=nb>0?(vol/nb).toFixed(1):'0'; }
 
-    function calculOuillage() {
-      const nb = parseInt(document.getElementById('ouillage-nb-futs')?.value) || 0;
-      const vol = parseFloat(document.getElementById('ouillage-volume')?.value) || 0;
-      document.getElementById('ouillage-total').textContent = vol.toFixed(1);
-      document.getElementById('ouillage-moyenne').textContent = nb > 0 ? (vol / nb).toFixed(1) : '0';
-    }
+    // Photo preview
+    document.getElementById('photo-input')?.addEventListener('change', async function(e){
+      const file = e.target.files[0];
+      const preview = document.getElementById('photo-preview');
+      if(!file){ preview.classList.add('hidden'); return; }
+      // compress to max 300px wide
+      const img = new Image();
+      img.onload = function(){
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(1, 300/img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        preview.src = canvas.toDataURL('image/jpeg', 0.6);
+        preview.classList.remove('hidden');
+      };
+      img.src = URL.createObjectURL(file);
+    });
 
-    // ==================== INTERVENTIONS ====================
-    function ajouterIntervention(e) {
+    // ==================== INTERVENTIONS (CRUD) ====================
+    let editingId = null;
+    function ajouterIntervention(e){
       e.preventDefault();
       const intervenants = getSelectedIntervenants();
-      if (intervenants.length === 0) {
-        alert('Veuillez sélectionner au moins un intervenant.');
-        return;
+      if(!intervenants.length){ alert('Sélectionnez au moins un intervenant.'); return; }
+      const quand=document.getElementById('quand').value, quoi=document.getElementById('quoi').value;
+      let cuvees=getSelectedCuvees(), contenants='';
+      if(cuvees.length===0){ contenants=document.getElementById('contenants-libre-input')?.value.trim()||''; }
+      if(!quand||!quoi){ alert('Remplissez Quand et Quoi.'); return; }
+      // ajout auto cuvée
+      if(cuvees.length===0 && contenants && !data.listes.cuvees.includes(contenants)){
+        data.listes.cuvees.push(contenants); data.listes.cuvees_futs[contenants]=0; trierListes(); alert(`Nouvelle cuvée "${contenants}" ajoutée.`);
       }
-      const quand = document.getElementById('quand').value;
-      const quoi = document.getElementById('quoi').value;
-      const cuvees = getSelectedCuvees();
-      let contenants = '';
-      if (cuvees.length === 0) {
-        contenants = document.getElementById('contenants-libre-input')?.value.trim() || '';
-      }
-      if (!quand || !quoi) {
-        alert('Veuillez remplir les champs obligatoires (Quand, Quoi).');
-        return;
-      }
+      let mesure='';
+      const unite=document.getElementById('mesure-unite')?.value;
+      if(unite==='pastille'){ const nb=document.getElementById('pastilles-nombre')?.value, g=document.getElementById('pastilles-grammes')?.value; if(nb) mesure=`${nb} pastille(s)`; if(g) mesure+=` (${g}g/pastille)`; }
+      else if(quoi==='ouillage'){ const nbF=document.getElementById('ouillage-nb-futs')?.value, vol=document.getElementById('ouillage-volume')?.value, moy=nbF>0?(parseFloat(vol)/parseInt(nbF)).toFixed(1):0; mesure=`${vol} L (${nbF} fûts, moy. ${moy} L/fût)`; }
+      else { const val=document.getElementById('mesure-valeur')?.value; if(val && unite && unite!=='__autre__') mesure=`${val} ${unite}`; else if(val && unite==='__autre__'){ const nu=prompt('Nouvelle unité:'); if(nu){ if(!data.listes.unites.includes(nu)){data.listes.unites.push(nu); saveData(); refreshAllSelects();} mesure=`${val} ${nu}`; } } }
+      const reiteration=document.getElementById('reiteration').value, anomalie=document.getElementById('anomalie').value;
+      const photoData = document.getElementById('photo-preview').src || '';
 
-      // Ajout automatique d'une nouvelle cuvée si le champ libre contient un nom inconnu
-      if (cuvees.length === 0 && contenants) {
-        // Si le contenant n'existe pas déjà dans la liste, on l'ajoute
-        if (!data.listes.cuvees.includes(contenants)) {
-          data.listes.cuvees.push(contenants);
-          data.listes.cuvees_futs[contenants] = 0;
-          trierListes(); // trie et sauvegarde
-          // petit message
-          alert(`Nouvelle cuvée "${contenants}" ajoutée à la liste.`);
-        }
-      }
-
-      let mesure = '';
-      const mesureUnite = document.getElementById('mesure-unite')?.value;
-      if (mesureUnite === 'pastille') {
-        const nb = document.getElementById('pastilles-nombre')?.value;
-        const g = document.getElementById('pastilles-grammes')?.value;
-        if (nb) mesure = `${nb} pastille(s)`;
-        if (g) mesure += ` (${g}g/pastille)`;
-      } else if (quoi === 'ouillage') {
-        const nbFuts = document.getElementById('ouillage-nb-futs')?.value;
-        const vol = document.getElementById('ouillage-volume')?.value;
-        const moyenne = nbFuts > 0 ? (parseFloat(vol)/parseInt(nbFuts)).toFixed(1) : 0;
-        mesure = `${vol} L (${nbFuts} fûts, moy. ${moyenne} L/fût)`;
+      const intervention = { id: Date.now(), intervenants, quand, quoi, cuvees, contenants, mesure, reiteration, anomalie, photo: photoData, created: new Date().toISOString() };
+      if(editingId){
+        const idx = data.interventions.findIndex(i=>i.id===editingId);
+        if(idx>-1){ data.interventions[idx] = intervention; data.interventions[idx].id = editingId; }
+        editingId=null; toggleEditMode(false);
       } else {
-        const val = document.getElementById('mesure-valeur')?.value;
-        if (val && mesureUnite && mesureUnite !== '__autre__') {
-          mesure = `${val} ${mesureUnite}`;
-        } else if (val && mesureUnite === '__autre__') {
-          const newUnit = prompt('Entrez la nouvelle unité :');
-          if (newUnit) {
-            if (!data.listes.unites.includes(newUnit)) {
-              data.listes.unites.push(newUnit);
-              saveData();
-              refreshAllSelects();
-            }
-            mesure = `${val} ${newUnit}`;
-          }
-        }
+        data.interventions.push(intervention);
       }
-
-      const reiteration = document.getElementById('reiteration').value;
-      const anomalie = document.getElementById('anomalie').value;
-
-      const intervention = {
-        id: Date.now(),
-        intervenants,
-        quand, quoi,
-        cuvees,
-        contenants,
-        mesure,
-        reiteration, anomalie,
-        created: new Date().toISOString()
-      };
-      data.interventions.push(intervention);
-      saveData();
-      viderFormulaire();
-      afficherHistorique();
-      verifierRappels();
-      alert('Intervention enregistrée ✅');
+      saveData(); viderFormulaire(); afficherHistorique(); verifierRappels();
     }
 
-    function viderFormulaire() {
-      document.getElementById('quand').value = new Date().toISOString().split('T')[0];
-      document.getElementById('mesure-valeur').value = '';
-      document.getElementById('reiteration').value = '';
-      document.getElementById('anomalie').value = '';
-      document.querySelectorAll('.cuvee-cb').forEach(cb => cb.checked = false);
-      document.querySelectorAll('.intervenant-cb').forEach(cb => cb.checked = false);
-      document.getElementById('contenants-libre-input').value = '';
-      document.getElementById('pastilles-nombre').value = '';
-      document.getElementById('pastilles-grammes').value = '5';
-      document.getElementById('ouillage-nb-futs').value = '';
-      document.getElementById('ouillage-volume').value = '10';
-      document.getElementById('mesure-unite').value = '';
-      handleMesureConditionnelle();
+    function supprimerIntervention(id){ data.interventions = data.interventions.filter(i=>i.id!==id); saveData(); afficherHistorique(); }
+
+    function modifierIntervention(id){
+      const inter = data.interventions.find(i=>i.id===id);
+      if(!inter) return;
+      editingId = id;
+      // remplir formulaire
+      document.querySelectorAll('.intervenant-cb').forEach(cb=>cb.checked = inter.intervenants.includes(cb.value));
+      document.getElementById('quand').value = inter.quand;
+      document.getElementById('quoi').value = inter.quoi;
+      // cuvées
+      document.querySelectorAll('.cuvee-cb').forEach(cb=>cb.checked = inter.cuvees.includes(cb.value) || (inter.cuvees.length===0 && inter.contenants));
+      document.getElementById('contenants-libre-input').value = inter.contenants || '';
       toggleContenantsLibre();
+      // mesure
+      if(inter.mesure.includes('pastille')){ /* extract */ } else { document.getElementById('mesure-valeur').value = ''; }
+      document.getElementById('reiteration').value = inter.reiteration || '';
+      document.getElementById('anomalie').value = inter.anomalie || '';
+      if(inter.photo){ document.getElementById('photo-preview').src = inter.photo; document.getElementById('photo-preview').classList.remove('hidden'); }
+      else { document.getElementById('photo-preview').classList.add('hidden'); }
+      toggleEditMode(true);
+      switchTab('saisie');
     }
 
-    function afficherHistorique() {
-      const tbody = document.querySelector('#table-historique tbody');
-      if (!tbody) return;
-      const filtreDate = document.getElementById('filtre-date')?.value || '';
-      const filtreQui = document.getElementById('filtre-qui')?.value || '';
-      const filtreQuoi = document.getElementById('filtre-quoi')?.value || '';
-      const filtreCuvee = document.getElementById('filtre-cuvee')?.value || '';
+    function toggleEditMode(editing){
+      document.getElementById('btn-enregistrer').classList.toggle('hidden', editing);
+      document.getElementById('btn-update').classList.toggle('hidden', !editing);
+      document.getElementById('btn-cancel-edit').classList.toggle('hidden', !editing);
+    }
 
-      let filtered = [...data.interventions].reverse();
-      if (filtreDate) filtered = filtered.filter(i => i.quand === filtreDate);
-      if (filtreQui) filtered = filtered.filter(i => i.intervenants.includes(filtreQui));
-      if (filtreQuoi) filtered = filtered.filter(i => i.quoi === filtreQuoi);
-      if (filtreCuvee) filtered = filtered.filter(i => i.cuvees.includes(filtreCuvee));
+    document.getElementById('btn-update')?.addEventListener('click', ajouterIntervention);
+    document.getElementById('btn-cancel-edit')?.addEventListener('click', ()=>{ editingId=null; toggleEditMode(false); viderFormulaire(); });
 
-      tbody.innerHTML = '';
-      filtered.forEach(i => {
-        const row = tbody.insertRow();
+    function viderFormulaire(){
+      document.getElementById('quand').value = new Date().toISOString().split('T')[0];
+      document.getElementById('mesure-valeur').value=''; document.getElementById('reiteration').value=''; document.getElementById('anomalie').value='';
+      document.querySelectorAll('.cuvee-cb').forEach(cb=>cb.checked=false);
+      document.querySelectorAll('.intervenant-cb').forEach(cb=>cb.checked=false);
+      document.getElementById('contenants-libre-input').value='';
+      document.getElementById('pastilles-nombre').value=''; document.getElementById('pastilles-grammes').value='5';
+      document.getElementById('ouillage-nb-futs').value=''; document.getElementById('ouillage-volume').value='10';
+      document.getElementById('photo-input').value=''; document.getElementById('photo-preview').classList.add('hidden');
+      handleMesureConditionnelle(); toggleContenantsLibre();
+    }
+
+    // ==================== HISTORIQUE, RECHERCHE, PAGINATION, TRI ====================
+    let currentPage = 1, perPage = 20, sortCol = 'quand', sortDir = 'desc';
+    function afficherHistorique(){
+      const tbody = document.querySelector('#table-historique tbody'); if(!tbody) return;
+      const search = document.getElementById('search-text')?.value.toLowerCase()||'';
+      const fDate = document.getElementById('filtre-date')?.value||'';
+      const fQui = document.getElementById('filtre-qui')?.value||'';
+      const fQuoi = document.getElementById('filtre-quoi')?.value||'';
+      const fCuvee = document.getElementById('filtre-cuvee')?.value||'';
+
+      let filtered = [...data.interventions].filter(i=>{
+        if(fDate && i.quand!==fDate) return false;
+        if(fQui && !i.intervenants.includes(fQui)) return false;
+        if(fQuoi && i.quoi!==fQuoi) return false;
+        if(fCuvee && !i.cuvees.includes(fCuvee)) return false;
+        if(search && !(JSON.stringify(i).toLowerCase().includes(search))) return false;
+        return true;
+      });
+
+      // tri
+      filtered.sort((a,b)=>{
+        let va=a[sortCol], vb=b[sortCol];
+        if(sortCol==='intervenants') va=a.intervenants.join(','), vb=b.intervenants.join(',');
+        if(sortCol==='cuvees') va=a.cuvees.join(','), vb=b.cuvees.join(',');
+        if(typeof va==='string') return sortDir==='asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+        return sortDir==='asc' ? va-vb : vb-va;
+      });
+
+      const totalPages = Math.ceil(filtered.length/perPage);
+      if(currentPage>totalPages) currentPage=totalPages||1;
+      const start = (currentPage-1)*perPage;
+      const pageItems = filtered.slice(start, start+perPage);
+
+      tbody.innerHTML='';
+      pageItems.forEach(i=>{
+        const row=tbody.insertRow();
         row.innerHTML = `
-          <td>${i.quand}</td>
-          <td>${i.intervenants.join(', ')}</td>
-          <td>${i.quoi}</td>
-          <td>${i.cuvees.length ? i.cuvees.join(', ') : (i.contenants || '-')}</td>
-          <td>${i.mesure || '-'}</td>
-          <td>${i.reiteration || '-'}</td>
-          <td>${i.anomalie || '-'}</td>
-          <td><button data-id="${i.id}" class="danger suppr-intervention">🗑️</button></td>
-        `;
+          <td>${i.quand}</td><td>${i.intervenants.join(', ')}</td><td>${i.quoi}</td>
+          <td>${i.cuvees.length?i.cuvees.join(', '):(i.contenants||'-')}</td>
+          <td>${i.mesure||'-'}</td><td>${i.reiteration||'-'}</td><td>${i.anomalie||'-'}</td>
+          <td>${i.photo?`<img src="${i.photo}" class="thumbnail" onclick="window.open('${i.photo}')">`:''}</td>
+          <td style="display:flex; gap:0.2rem;">
+            <button data-id="${i.id}" class="edit-intervention">✏️</button>
+            <button data-id="${i.id}" class="clone-intervention">📋</button>
+            <button data-id="${i.id}" class="delete-intervention">🗑️</button>
+          </td>`;
       });
+      // pagination
+      const pagDiv = document.getElementById('pagination');
+      pagDiv.innerHTML = totalPages>1 ? `Page ${currentPage}/${totalPages} ` : '';
+      if(currentPage>1) pagDiv.innerHTML += `<button id="prev-page">◀</button>`;
+      if(currentPage<totalPages) pagDiv.innerHTML += `<button id="next-page">▶</button>`;
+      document.getElementById('prev-page')?.addEventListener('click',()=>{ currentPage--; afficherHistorique(); });
+      document.getElementById('next-page')?.addEventListener('click',()=>{ currentPage++; afficherHistorique(); });
 
-      document.querySelectorAll('.suppr-intervention').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const id = parseInt(e.target.closest('button').dataset.id);
-          data.interventions = data.interventions.filter(i => i.id !== id);
-          saveData();
-          afficherHistorique();
-        });
-      });
+      // Events edit/delete/clone
+      document.querySelectorAll('.edit-intervention').forEach(b=>b.addEventListener('click', ()=> modifierIntervention(parseInt(b.dataset.id))));
+      document.querySelectorAll('.clone-intervention').forEach(b=>b.addEventListener('click', ()=>{
+        const inter = data.interventions.find(i=>i.id===parseInt(b.dataset.id));
+        if(inter){ const n={...inter, id:Date.now(), created:new Date().toISOString()}; data.interventions.push(n); saveData(); afficherHistorique(); }
+      }));
+      document.querySelectorAll('.delete-intervention').forEach(b=>b.addEventListener('click', ()=>{
+        document.getElementById('modal-delete').classList.remove('hidden');
+        document.getElementById('confirm-delete').onclick = ()=>{ supprimerIntervention(parseInt(b.dataset.id)); document.getElementById('modal-delete').classList.add('hidden'); };
+        document.getElementById('cancel-delete').onclick = ()=> document.getElementById('modal-delete').classList.add('hidden');
+      }));
     }
 
-    // ==================== EXPORT PDF ====================
-    function exporterPDF() {
-      if (typeof window.jspdf === 'undefined') {
-        alert('Chargement du module PDF... Réessayez.');
-        return;
-      }
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text('Suivi de Cave', 20, 20);
-      doc.setFontSize(10);
-      let y = 30;
-      const filtreDate = document.getElementById('filtre-date')?.value || '';
-      const filtreQui = document.getElementById('filtre-qui')?.value || '';
-      const filtreQuoi = document.getElementById('filtre-quoi')?.value || '';
-      const filtreCuvee = document.getElementById('filtre-cuvee')?.value || '';
+    // Tri colonnes
+    document.querySelectorAll('#table-historique th[data-col]').forEach(th=>{
+      th.addEventListener('click', ()=>{
+        const col = th.dataset.col;
+        if(sortCol===col) sortDir = sortDir==='asc'?'desc':'asc';
+        else { sortCol=col; sortDir='asc'; }
+        document.querySelectorAll('th').forEach(t=>t.classList.remove('sorted','asc'));
+        th.classList.add('sorted'); if(sortDir==='asc') th.classList.add('asc');
+        afficherHistorique();
+      });
+    });
 
-      let filtered = [...data.interventions].reverse();
-      if (filtreDate) filtered = filtered.filter(i => i.quand === filtreDate);
-      if (filtreQui) filtered = filtered.filter(i => i.intervenants.includes(filtreQui));
-      if (filtreQuoi) filtered = filtered.filter(i => i.quoi === filtreQuoi);
-      if (filtreCuvee) filtered = filtered.filter(i => i.cuvees.includes(filtreCuvee));
+    // Filtres
+    document.getElementById('search-text')?.addEventListener('input', afficherHistorique);
+    ['filtre-date','filtre-qui','filtre-quoi','filtre-cuvee'].forEach(id=> document.getElementById(id)?.addEventListener('change', afficherHistorique));
 
-      if (filtered.length === 0) {
-        doc.text('Aucune intervention trouvée.', 20, y);
-      } else {
-        doc.text('Date - Qui - Action - Cuvées - Mesure - Réitération - Anomalie', 20, y);
-        y += 6;
-        filtered.forEach(i => {
-          const ligne = `${i.quand} | ${i.intervenants.join(', ')} | ${i.quoi} | ${i.cuvees.join(', ') || i.contenants} | ${i.mesure || '-'} | ${i.reiteration || '-'} | ${i.anomalie || '-'}`;
-          doc.text(ligne, 20, y);
-          y += 6;
-          if (y > 280) { doc.addPage(); y = 20; }
-        });
-      }
+    // ==================== EXPORT PDF/CSV/JSON ====================
+    function exporterPDF(){
+      if(typeof window.jspdf==='undefined'){ alert('Chargement...'); return; }
+      const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.setFontSize(16); doc.text('Suivi de Cave',20,20); doc.setFontSize(10); let y=30;
+      const filtered=data.interventions; // simplifié
+      filtered.forEach(i=>{
+        const ligne=`${i.quand} | ${i.intervenants.join(', ')} | ${i.quoi} | ${i.cuvees.join(', ')||i.contenants} | ${i.mesure||'-'} | ${i.reiteration||'-'} | ${i.anomalie||'-'}`;
+        doc.text(ligne,20,y); y+=6; if(y>280){ doc.addPage(); y=20; }
+      });
       doc.save('suivi-cave.pdf');
     }
+    function exporterCSV(){
+      let csv='Date,Qui,Action,Cuvées,Mesure,Réitération,Anomalie\n';
+      data.interventions.forEach(i=>{ csv+=`${i.quand},${i.intervenants.join(', ')},${i.quoi},"${i.cuvees.join(', ')||i.contenants}",${i.mesure||''},${i.reiteration||''},"${i.anomalie||''}"\n`; });
+      const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='suivi-cave.csv'; a.click();
+    }
+    function exporterJSON(){
+      const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='suivi-cave.json'; a.click();
+    }
+    function importerJSON(){
+      const input=document.createElement('input'); input.type='file'; input.accept='.json';
+      input.onchange=async (e)=>{
+        const file=e.target.files[0]; if(!file)return;
+        const text=await file.text(); try{ const imported=JSON.parse(text); if(imported.listes && imported.interventions){ data=imported; saveData(); refreshAllSelects(); afficherHistorique(); alert('Import réussi !'); } } catch{ alert('Fichier invalide'); }
+      };
+      input.click();
+    }
 
-    // ==================== GESTION LISTES ====================
-    function buildListesUI() {
-      // Intervenants
-      const intervenantsDiv = document.getElementById('liste-intervenants');
-      if (intervenantsDiv) {
-        intervenantsDiv.innerHTML = data.listes.intervenants.map((nom, idx) => `
-          <div class="list-item">
-            <input type="text" value="${nom}" data-idx="${idx}" class="edit-intervenant" style="flex:1">
-            <button data-idx="${idx}" class="suppr-intervenant danger">🗑️</button>
-          </div>`).join('');
-      }
-      document.querySelectorAll('.edit-intervenant').forEach(inp => {
-        inp.addEventListener('change', (e) => {
-          const idx = e.target.dataset.idx;
-          data.listes.intervenants[idx] = e.target.value;
-          trierListes(); // trie et sauvegarde
-        });
-      });
-      document.querySelectorAll('.suppr-intervenant').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = e.target.dataset.idx;
-          data.listes.intervenants.splice(idx, 1);
-          trierListes();
-        });
-      });
+    document.getElementById('btn-export-pdf')?.addEventListener('click', exporterPDF);
+    document.getElementById('btn-export-csv')?.addEventListener('click', exporterCSV);
+    document.getElementById('btn-export-json')?.addEventListener('click', exporterJSON);
+    document.getElementById('btn-import-json')?.addEventListener('click', importerJSON);
 
-      // Actions
-      const actionsDiv = document.getElementById('liste-actions');
-      if (actionsDiv) {
-        actionsDiv.innerHTML = data.listes.actions.map((a, idx) => `
-          <div class="list-item">
-            <input type="text" value="${a}" data-idx="${idx}" class="edit-action" style="flex:1">
-            <button data-idx="${idx}" class="suppr-action danger">🗑️</button>
-          </div>`).join('');
-      }
-      document.querySelectorAll('.edit-action').forEach(inp => {
-        inp.addEventListener('change', (e) => {
-          const idx = e.target.dataset.idx;
-          data.listes.actions[idx] = e.target.value;
-          trierListes();
-        });
+    // ==================== STATISTIQUES ====================
+    let chartInstance=null;
+    function buildStats(){
+      const ctx=document.getElementById('statsChart')?.getContext('2d'); if(!ctx)return;
+      const monthlyCounts={};
+      data.interventions.forEach(i=>{
+        const month=i.quand.substring(0,7);
+        monthlyCounts[month]=(monthlyCounts[month]||0)+1;
       });
-      document.querySelectorAll('.suppr-action').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = e.target.dataset.idx;
-          data.listes.actions.splice(idx, 1);
-          trierListes();
-        });
-      });
-
-      // Cuvées avec fûts
-      const cuveesDiv = document.getElementById('liste-cuvees');
-      if (cuveesDiv) {
-        const cuveesSansTout = data.listes.cuvees.filter(c => c !== 'Tout');
-        cuveesDiv.innerHTML = cuveesSansTout.map((c, idx) => {
-          const nbFuts = data.listes.cuvees_futs[c] || 0;
-          return `
-            <div class="list-item">
-              <input type="text" value="${c}" data-idx="${idx}" class="edit-cuvee" style="flex:2">
-              <input type="number" value="${nbFuts}" data-cuvee="${c}" class="edit-futs" placeholder="Fûts" min="0" style="width:60px">
-              <button data-idx="${idx}" class="suppr-cuvee danger">🗑️</button>
-            </div>`;
-        }).join('');
-      }
-      document.querySelectorAll('.edit-cuvee').forEach(inp => {
-        inp.addEventListener('change', (e) => {
-          const idx = parseInt(e.target.dataset.idx);
-          const cuveesSansTout = data.listes.cuvees.filter(c => c !== 'Tout');
-          const oldName = cuveesSansTout[idx];
-          const newName = e.target.value;
-          cuveesSansTout[idx] = newName;
-          data.listes.cuvees = ['Tout', ...cuveesSansTout];
-          if (oldName !== newName) {
-            data.listes.cuvees_futs[newName] = data.listes.cuvees_futs[oldName] || 0;
-            delete data.listes.cuvees_futs[oldName];
-          }
-          trierListes(); // trie après modification
-        });
-      });
-      document.querySelectorAll('.edit-futs').forEach(inp => {
-        inp.addEventListener('change', (e) => {
-          const cuvee = e.target.dataset.cuvee;
-          const val = parseInt(e.target.value) || 0;
-          data.listes.cuvees_futs[cuvee] = val;
-          saveData(); // pas de tri nécessaire ici
-        });
-      });
-      document.querySelectorAll('.suppr-cuvee').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = parseInt(e.target.dataset.idx);
-          const cuveesSansTout = data.listes.cuvees.filter(c => c !== 'Tout');
-          const removed = cuveesSansTout.splice(idx, 1)[0];
-          data.listes.cuvees = ['Tout', ...cuveesSansTout];
-          delete data.listes.cuvees_futs[removed];
-          trierListes();
-        });
-      });
-
-      // Unités
-      const unitesDiv = document.getElementById('liste-unites');
-      if (unitesDiv) {
-        unitesDiv.innerHTML = data.listes.unites.map((u, idx) => `
-          <div class="list-item">
-            <input type="text" value="${u}" data-idx="${idx}" class="edit-unite" style="flex:1">
-            <button data-idx="${idx}" class="suppr-unite danger">🗑️</button>
-          </div>`).join('');
-      }
-      document.querySelectorAll('.edit-unite').forEach(inp => {
-        inp.addEventListener('change', (e) => {
-          const idx = e.target.dataset.idx;
-          data.listes.unites[idx] = e.target.value;
-          trierListes();
-        });
-      });
-      document.querySelectorAll('.suppr-unite').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = e.target.dataset.idx;
-          data.listes.unites.splice(idx, 1);
-          trierListes();
-        });
-      });
+      const labels=Object.keys(monthlyCounts).sort(), values=labels.map(l=>monthlyCounts[l]);
+      if(chartInstance) chartInstance.destroy();
+      chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Interventions',data:values,backgroundColor:getComputedStyle(document.body).getPropertyValue('--accent')}]},options:{responsive:true,maintainAspectRatio:false}});
     }
 
     // ==================== RAPPELS ====================
-    function verifierRappels() {
-      const aujourdhui = new Date().toISOString().split('T')[0];
-      const aVenir = data.interventions.filter(i => i.reiteration === aujourdhui);
-      const badge = document.getElementById('badge-rappel');
-      if (badge) {
-        badge.textContent = aVenir.length;
-        badge.classList.toggle('hidden', aVenir.length === 0);
-      }
-      if (aVenir.length > 0 && Notification.permission === 'granted') {
-        aVenir.forEach(i => {
-          new Notification('🍷 Rappel de cave', {
-            body: `${i.quoi} - ${i.cuvees.join(', ') || i.contenants}`,
-            icon: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><text y="1em" font-size="150">🍷</text></svg>')
-          });
-        });
+    function verifierRappels(){
+      const aujourd=new Date(); aujourd.setHours(0,0,0,0);
+      const rappelJours=data.listes.rappel_jours||0;
+      const dateLimite=new Date(aujourd); dateLimite.setDate(dateLimite.getDate()+rappelJours);
+      const aVenir=data.interventions.filter(i=>{
+        if(!i.reiteration) return false;
+        const d=new Date(i.reiteration); d.setHours(0,0,0,0);
+        return d.getTime()===dateLimite.getTime() || (rappelJours===0 && d.getTime()===aujourd.getTime());
+      });
+      const badge=document.getElementById('badge-rappel');
+      if(badge){ badge.textContent=aVenir.length; badge.classList.toggle('hidden',aVenir.length===0); }
+      if(aVenir.length>0 && Notification.permission==='granted'){
+        aVenir.forEach(i=>{ new Notification('🍷 Rappel',{body:`${i.quoi} - ${i.cuvees.join(', ')||i.contenants}`}); });
       }
     }
+    document.getElementById('rappel-jours')?.addEventListener('change', function(){ data.listes.rappel_jours=parseInt(this.value)||0; saveData(); });
 
-    function demanderPermissionNotification() {
-      if (Notification.permission === 'default') Notification.requestPermission();
+    // ==================== GESTION LISTES (comme avant avec tri) ====================
+    function buildListesUI(){
+      // Intervenants
+      const divI=document.getElementById('liste-intervenants'); if(divI) divI.innerHTML=data.listes.intervenants.map((n,i)=>`<div class="list-item"><input type="text" value="${n}" data-idx="${i}" class="edit-intervenant" style="flex:1"><button data-idx="${i}" class="suppr-intervenant danger">🗑️</button></div>`).join('');
+      document.querySelectorAll('.edit-intervenant').forEach(inp=>inp.addEventListener('change',e=>{ data.listes.intervenants[e.target.dataset.idx]=e.target.value; trierListes(); }));
+      document.querySelectorAll('.suppr-intervenant').forEach(b=>b.addEventListener('click',e=>{ data.listes.intervenants.splice(e.target.dataset.idx,1); trierListes(); }));
+
+      // Actions
+      const divA=document.getElementById('liste-actions'); if(divA) divA.innerHTML=data.listes.actions.map((a,i)=>`<div class="list-item"><input type="text" value="${a}" data-idx="${i}" class="edit-action" style="flex:1"><button data-idx="${i}" class="suppr-action danger">🗑️</button></div>`).join('');
+      document.querySelectorAll('.edit-action').forEach(inp=>inp.addEventListener('change',e=>{ data.listes.actions[e.target.dataset.idx]=e.target.value; trierListes(); }));
+      document.querySelectorAll('.suppr-action').forEach(b=>b.addEventListener('click',e=>{ data.listes.actions.splice(e.target.dataset.idx,1); trierListes(); }));
+
+      // Cuvées
+      const divC=document.getElementById('liste-cuvees'); if(divC){ const sansTout=data.listes.cuvees.filter(c=>c!=='Tout'); divC.innerHTML=sansTout.map((c,i)=>{ const f=data.listes.cuvees_futs[c]||0; return `<div class="list-item"><input type="text" value="${c}" data-idx="${i}" class="edit-cuvee" style="flex:2"><input type="number" value="${f}" data-cuvee="${c}" class="edit-futs" placeholder="Fûts" min="0" style="width:60px"><button data-idx="${i}" class="suppr-cuvee danger">🗑️</button></div>`; }).join(''); }
+      document.querySelectorAll('.edit-cuvee').forEach(inp=>inp.addEventListener('change',e=>{ const idx=e.target.dataset.idx; const sansTout=data.listes.cuvees.filter(c=>c!=='Tout'); const old=sansTout[idx]; sansTout[idx]=e.target.value; data.listes.cuvees=['Tout',...sansTout]; if(old!==e.target.value){ data.listes.cuvees_futs[e.target.value]=data.listes.cuvees_futs[old]||0; delete data.listes.cuvees_futs[old]; } trierListes(); }));
+      document.querySelectorAll('.edit-futs').forEach(inp=>inp.addEventListener('change',e=>{ data.listes.cuvees_futs[e.target.dataset.cuvee]=parseInt(e.target.value)||0; saveData(); }));
+      document.querySelectorAll('.suppr-cuvee').forEach(b=>b.addEventListener('click',e=>{ const idx=e.target.dataset.idx; const sansTout=data.listes.cuvees.filter(c=>c!=='Tout'); const rem=sansTout.splice(idx,1)[0]; data.listes.cuvees=['Tout',...sansTout]; delete data.listes.cuvees_futs[rem]; trierListes(); }));
+
+      // Unités
+      const divU=document.getElementById('liste-unites'); if(divU) divU.innerHTML=data.listes.unites.map((u,i)=>`<div class="list-item"><input type="text" value="${u}" data-idx="${i}" class="edit-unite" style="flex:1"><button data-idx="${i}" class="suppr-unite danger">🗑️</button></div>`).join('');
+      document.querySelectorAll('.edit-unite').forEach(inp=>inp.addEventListener('change',e=>{ data.listes.unites[e.target.dataset.idx]=e.target.value; trierListes(); }));
+      document.querySelectorAll('.suppr-unite').forEach(b=>b.addEventListener('click',e=>{ data.listes.unites.splice(e.target.dataset.idx,1); trierListes(); }));
     }
 
-    // ==================== NAVIGATION ====================
-    document.getElementById('tab-saisie').addEventListener('click', ()=> switchTab('saisie'));
-    document.getElementById('tab-historique').addEventListener('click', ()=> { switchTab('historique'); afficherHistorique(); });
-    document.getElementById('tab-listes').addEventListener('click', ()=> switchTab('listes'));
-
-    function switchTab(name) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    // ==================== NAVIGATION & SWIPE ====================
+    function switchTab(name){
+      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
       document.getElementById(name).classList.add('active');
-      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
       document.getElementById(`tab-${name}`).classList.add('active');
+      if(name==='stats') buildStats();
     }
+    const tabs=['saisie','historique','stats','listes'];
+    tabs.forEach(t=>document.getElementById(`tab-${t}`).addEventListener('click',()=>switchTab(t)));
 
-    // ==================== ÉCOUTEURS ====================
-    document.getElementById('btn-enregistrer').addEventListener('click', ajouterIntervention);
-    document.getElementById('btn-export-pdf').addEventListener('click', exporterPDF);
+    let touchStartX=0;
+    document.addEventListener('touchstart', e=>{ touchStartX=e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e=>{
+      if(!touchStartX) return;
+      const diff=e.changedTouches[0].screenX - touchStartX;
+      if(Math.abs(diff)<50) return;
+      const current=document.querySelector('.section.active').id;
+      const idx=tabs.indexOf(current);
+      if(diff<0 && idx<tabs.length-1) switchTab(tabs[idx+1]);
+      else if(diff>0 && idx>0) switchTab(tabs[idx-1]);
+    });
+
+    // ==================== INIT ====================
+    document.getElementById('btn-enregistrer')?.addEventListener('click', ajouterIntervention);
     document.getElementById('quand').value = new Date().toISOString().split('T')[0];
 
-    document.getElementById('btn-add-intervenant').addEventListener('click', () => {
-      const val = document.getElementById('new-intervenant').value.trim();
-      if (val) { data.listes.intervenants.push(val); trierListes(); document.getElementById('new-intervenant').value = ''; }
-    });
-    document.getElementById('btn-add-action').addEventListener('click', () => {
-      const val = document.getElementById('new-action').value.trim();
-      if (val) { data.listes.actions.push(val); trierListes(); document.getElementById('new-action').value = ''; }
-    });
-    document.getElementById('btn-add-cuvee').addEventListener('click', () => {
-      const val = document.getElementById('new-cuvee').value.trim();
-      if (val && !data.listes.cuvees.includes(val)) {
-        data.listes.cuvees.push(val);
-        data.listes.cuvees_futs[val] = 0;
-        trierListes();
-        document.getElementById('new-cuvee').value = '';
-      }
-    });
-    document.getElementById('btn-add-unite').addEventListener('click', () => {
-      const val = document.getElementById('new-unite').value.trim();
-      if (val && !data.listes.unites.includes(val)) {
-        data.listes.unites.push(val);
-        trierListes();
-        document.getElementById('new-unite').value = '';
-      }
-    });
+    document.getElementById('btn-add-intervenant')?.addEventListener('click', ()=>{ const v=document.getElementById('new-intervenant').value.trim(); if(v){ data.listes.intervenants.push(v); trierListes(); document.getElementById('new-intervenant').value=''; } });
+    document.getElementById('btn-add-action')?.addEventListener('click', ()=>{ const v=document.getElementById('new-action').value.trim(); if(v){ data.listes.actions.push(v); trierListes(); document.getElementById('new-action').value=''; } });
+    document.getElementById('btn-add-cuvee')?.addEventListener('click', ()=>{ const v=document.getElementById('new-cuvee').value.trim(); if(v && !data.listes.cuvees.includes(v)){ data.listes.cuvees.push(v); data.listes.cuvees_futs[v]=0; trierListes(); document.getElementById('new-cuvee').value=''; } });
+    document.getElementById('btn-add-unite')?.addEventListener('click', ()=>{ const v=document.getElementById('new-unite').value.trim(); if(v && !data.listes.unites.includes(v)){ data.listes.unites.push(v); trierListes(); document.getElementById('new-unite').value=''; } });
 
-    ['filtre-date','filtre-qui','filtre-quoi','filtre-cuvee'].forEach(id => {
-      document.getElementById(id)?.addEventListener('change', afficherHistorique);
-    });
-
-    // ==================== PWA ====================
-    function setupPWA() {
-      const manifest = {
-        name: 'Suivi de Cave',
-        short_name: 'Cave',
-        start_url: '.',
-        display: 'standalone',
-        background_color: '#f5f0eb',
-        theme_color: '#6b3e2e',
-        icons: [{
-          src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><text y="1em" font-size="150">🍷</text></svg>'),
-          sizes: '192x192',
-          type: 'image/svg+xml'
-        }]
-      };
-      const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-      const manifestURL = URL.createObjectURL(blob);
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = manifestURL;
-      document.head.appendChild(link);
-
-      if ('serviceWorker' in navigator) {
-        const swCode = `
-          const CACHE = 'cave-v5';
-          self.addEventListener('install', e => {
-            e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(['./'])));
-          });
-          self.addEventListener('fetch', e => {
-            e.respondWith(caches.match(e.request).then(resp => resp || fetch(e.request)));
-          });
-        `;
-        const swBlob = new Blob([swCode], {type: 'application/javascript'});
-        const swURL = URL.createObjectURL(swBlob);
-        navigator.serviceWorker.register(swURL, {scope: './'}).catch(err => console.log('SW registration failed', err));
+    // PWA
+    function setupPWA(){
+      const manifest={name:'Suivi de Cave',short_name:'Cave',start_url:'.',display:'standalone',background_color:'#f4f1ea',theme_color:'#5b8c5a',icons:[{src:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><circle cx="96" cy="96" r="80" fill="#5b8c5a"/><text y="120" x="96" text-anchor="middle" font-size="100">🍷</text></svg>'),sizes:'192x192',type:'image/svg+xml'}]};
+      const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'}); const url=URL.createObjectURL(blob);
+      const link=document.createElement('link'); link.rel='manifest'; link.href=url; document.head.appendChild(link);
+      if('serviceWorker' in navigator){
+        const swCode=`const CACHE='cave-v6';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
+        const swBlob=new Blob([swCode],{type:'application/javascript'}); navigator.serviceWorker.register(URL.createObjectURL(swBlob),{scope:'./'}).catch(()=>{});
       }
     }
 
-    // Initialisation
     loadData();
     refreshAllSelects();
     setupPWA();
-    demanderPermissionNotification();
+    if(Notification.permission==='default') Notification.requestPermission();
     verifierRappels();
     setInterval(verifierRappels, 3600000);
-
-    // Charger jsPDF
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    document.head.appendChild(script);
+    // charger jsPDF
+    const script=document.createElement('script'); script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'; document.head.appendChild(script);
   </script>
 </body>
 </html>
